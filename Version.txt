@@ -1,0 +1,5 @@
+git -v
+java -version
+javac -version
+docker version
+mvn -v
