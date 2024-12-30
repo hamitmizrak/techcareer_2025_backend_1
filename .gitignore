@@ -1,5 +1,10 @@
-HELP.md
+# Special
+frontend/
+log/
+database_memory_persist/
 target/
+
+HELP.md
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
