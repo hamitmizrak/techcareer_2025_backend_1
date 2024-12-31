@@ -39,7 +39,33 @@ public class ModelMapperBean {
     // Bean Oluşturma(instance)
     @Bean
     @Scope("singleton")
-    public ModelMapper getModelMapperMethod(){
+    // singleton: Varsayılan Scope türüdür. Tüm uygulama boyunca tek bir örnek üzerinden devam edilir.
+    public ModelMapper getModelMapperSingleton(){
         return new ModelMapper();
     }
-}
+
+    // prototype
+    @Bean
+    @Scope("prototype")
+    // prototype: Her talepte yeni bir örnek oluştur.
+    public ModelMapper getModelMapperPrototype(){
+        return new ModelMapper();
+    }
+
+    // request
+    @Bean
+    @Scope("request")
+    // request: Her bir Http isteği için yeni bir örnek oluştur.
+    public ModelMapper getModelMappeRequest(){
+        return new ModelMapper();
+    }
+
+    // session
+    @Bean
+    @Scope("session")
+    // session: Her bir Http oturumu için yeni bir örnek oluştur.
+    public ModelMapper getModelMappeSession(){
+        return new ModelMapper();
+    }
+
+} //end ModelMapperBean
