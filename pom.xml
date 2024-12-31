@@ -395,6 +395,7 @@
 					</compilerArgs>
 
 					<!--for lombok-->
+					<!-- important !: for lombok you have to `${lombok.version}` give -->
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
