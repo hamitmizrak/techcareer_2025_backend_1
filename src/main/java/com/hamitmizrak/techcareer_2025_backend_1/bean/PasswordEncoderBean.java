@@ -3,6 +3,7 @@ package com.hamitmizrak.techcareer_2025_backend_1.bean;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -76,5 +77,40 @@ public class PasswordEncoderBean {
         log.info("PasswordEncoderBean: Session Bean oluşturuldu");
         return new BCryptPasswordEncoder();
     }
+
+    // PSVM
+    public static void main(String[] args) {
+        // Spring IoC (Inversion of Control Container) Containerı başlatmak ve yapılandırmak
+        // Spring'in temel yapı taşlarından önemli bir birleşendir.
+        // Uygulamalanın nesnenein yaşam döngüsünü ve bağımlılıkları yönetmektedir.
+        // AnnotationConfigApplicationContext bu class yanlızca ve yanlızca Java tabanlı yapılandırma olan @Configuration anotasyonunu eklenmişse
+        // ve Spring uygulamasını başlatmak istiyorsak
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PasswordEncoderBean.class);
+
+        // Singleton Bean çağırmak
+        PasswordEncoder singletonEncoder1 = context.getBean("getPasswordEncoderSingleton",PasswordEncoder.class);
+        PasswordEncoder singletonEncoder2 = context.getBean("getPasswordEncoderSingleton",PasswordEncoder.class);
+
+        // sout
+        System.out.println("Singleton Encoder-1: " + singletonEncoder1);
+        System.out.println("Singleton Encoder-2: " + singletonEncoder2);
+
+        /*
+        if (singletonEncoder1==singletonEncoder2) {
+            System.out.println("Aynı nesneler");
+        }else{
+            System.out.println("Farklı Nesneler");
+        }
+        */
+
+
+        // Bean kullanımı
+        String rawPassword="abc123";
+        String encodedPassword=singletonEncoder1.encode(rawPassword);
+        System.out.println("Raw Password: " + rawPassword);
+        System.out.println("Encoded Password: " + encodedPassword);
+
+
+    } //end PSVM
 
 } // end class PasswordEncoderBean
