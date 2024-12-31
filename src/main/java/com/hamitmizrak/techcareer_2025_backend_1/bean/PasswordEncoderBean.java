@@ -19,7 +19,7 @@ public class PasswordEncoderBean {
     // Constructor
     public PasswordEncoderBean() {
         System.out.println("PasswordEncoderBean: Constructor Bean Başlatıldı");
-        log.info("PasswordEncoderBean: Constructor Bean Başlatıldı");
+        //log.info("PasswordEncoderBean: Constructor Bean Başlatıldı");
     }
 
     // init metodu bean(Injection) oluşturulduktan hemen sonra çalışır.
@@ -27,7 +27,7 @@ public class PasswordEncoderBean {
     @PostConstruct
     public void init() {
         System.out.println("PasswordEncoderBean: @PostConstruct Bean Başlatıldı");
-        log.info("PasswordEncoderBean: @PostConstruct Bean Başlatıldı");
+        //log.info("PasswordEncoderBean: @PostConstruct Bean Başlatıldı");
     }
 
     // destroy metodu bean yok edilmeden hemen önce çalışır.
@@ -35,7 +35,7 @@ public class PasswordEncoderBean {
     @PreDestroy
     public void destroy() {
         System.out.println("PasswordEncoderBean: @PreDestroy Bean Öldü");
-        log.info("PasswordEncoderBean: @PreDestroy Bean Öldü");
+        //log.info("PasswordEncoderBean: @PreDestroy Bean Öldü");
     }
 
     // Bean Oluşturma (Singleton Scope)
@@ -44,7 +44,7 @@ public class PasswordEncoderBean {
     // singleton: Varsayılan Scope türüdür. Tüm uygulama boyunca tek bir örnek üzerinden devam edilir.
     public PasswordEncoder getPasswordEncoderSingleton() {
         System.out.println("PasswordEncoderBean: Singleton Bean oluşturuldu");
-        log.info("PasswordEncoderBean: Singleton Bean oluşturuldu");
+        //log.info("PasswordEncoderBean: Singleton Bean oluşturuldu");
         return new BCryptPasswordEncoder();
     }
 
@@ -54,7 +54,7 @@ public class PasswordEncoderBean {
     // prototype: Her talepte yeni bir örnek oluştur.
     public PasswordEncoder getPasswordEncoderPrototype() {
         System.out.println("PasswordEncoderBean: Prototype Bean oluşturuldu");
-        log.info("PasswordEncoderBean: Prototype Bean oluşturuldu");
+        //log.info("PasswordEncoderBean: Prototype Bean oluşturuldu");
         return new BCryptPasswordEncoder();
     }
 
@@ -64,7 +64,7 @@ public class PasswordEncoderBean {
     // request: Her bir Http isteği için yeni bir örnek oluştur.
     public PasswordEncoder getPasswordEncoderRequest() {
         System.out.println("PasswordEncoderBean: Request Bean oluşturuldu");
-        log.info("PasswordEncoderBean: Request Bean oluşturuldu");
+        //log.info("PasswordEncoderBean: Request Bean oluşturuldu");
         return new BCryptPasswordEncoder();
     }
 
@@ -74,7 +74,7 @@ public class PasswordEncoderBean {
     // session: Her bir Http oturumu için yeni bir örnek oluştur.
     public PasswordEncoder getPasswordEncoderSession() {
         System.out.println("PasswordEncoderBean: Session Bean oluşturuldu");
-        log.info("PasswordEncoderBean: Session Bean oluşturuldu");
+        //log.info("PasswordEncoderBean: Session Bean oluşturuldu");
         return new BCryptPasswordEncoder();
     }
 
@@ -87,29 +87,36 @@ public class PasswordEncoderBean {
         // ve Spring uygulamasını başlatmak istiyorsak
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(PasswordEncoderBean.class);
 
-        // Singleton Bean çağırmak
-        PasswordEncoder singletonEncoder1 = context.getBean("getPasswordEncoderSingleton",PasswordEncoder.class);
-        PasswordEncoder singletonEncoder2 = context.getBean("getPasswordEncoderSingleton",PasswordEncoder.class);
+        // Singleton Bean çağırma
+        PasswordEncoder singletonEncoder1 = context.getBean("getPasswordEncoderSingleton", PasswordEncoder.class);
+        PasswordEncoder singletonEncoder2 = context.getBean("getPasswordEncoderSingleton", PasswordEncoder.class);
 
-        // sout
-        System.out.println("Singleton Encoder-1: " + singletonEncoder1);
-        System.out.println("Singleton Encoder-2: " + singletonEncoder2);
+        System.out.println("Singleton Encoder 1: " + singletonEncoder1);
+        System.out.println("Singleton Encoder 2: " + singletonEncoder2);
+        //System.out.println("Singleton aynı nesne mi? " + (singletonEncoder1 == singletonEncoder2));
 
-        /*
-        if (singletonEncoder1==singletonEncoder2) {
-            System.out.println("Aynı nesneler");
+        // Prototype Bean çağırma
+        PasswordEncoder prototypeEncoder1 = context.getBean("getPasswordEncoderPrototype", PasswordEncoder.class);
+        PasswordEncoder prototypeEncoder2 = context.getBean("getPasswordEncoderPrototype", PasswordEncoder.class);
+
+        System.out.println("Prototype Encoder 1: " + prototypeEncoder1+" Hashcode1: "+prototypeEncoder1.hashCode());
+        System.out.println("Prototype Encoder 2: " + prototypeEncoder2+" Hashcode2: "+prototypeEncoder2.hashCode());
+
+        // Nesne karşılatır
+        if(prototypeEncoder1 == prototypeEncoder2){
+            System.out.println("Aynı Nesne");
         }else{
-            System.out.println("Farklı Nesneler");
+            System.out.println("Farklı Nesne");
         }
-        */
 
-
-        // Bean kullanımı
-        String rawPassword="abc123";
-        String encodedPassword=singletonEncoder1.encode(rawPassword);
+        // Bean kullanım örneği
+        String rawPassword = "password123";
+        String encodedPassword = singletonEncoder1.encode(rawPassword);
         System.out.println("Raw Password: " + rawPassword);
         System.out.println("Encoded Password: " + encodedPassword);
 
+        // Context kapatılır ve Bean Ölür.
+        context.close();
 
     } //end PSVM
 
