@@ -964,3 +964,212 @@ Spring Framework, farklı ihtiyaçlara yönelik çeşitli modüller içerir:
 
 ### **Sonuç**
 Spring Framework, modern yazılım geliştirme süreçlerinde esneklik, performans ve sürdürülebilirlik arayan geliştiriciler için ideal bir araçtır. Spring'in sunduğu geniş özellik seti ve modüler yapısı, her ölçekte uygulama geliştirmek için uygun bir altyapı sağlar. Kurumsal Java uygulamaları için standart haline gelen bu framework, günümüzde popülaritesini korumakta ve sürekli olarak güncellenmektedir.
+
+---
+# BEAN 
+### Spring Bean Nedir?
+
+Spring Framework'de bir **"Bean"**, Spring IoC (Inversion of Control) Container tarafından yönetilen ve bir Java sınıfının örneğini temsil eden nesnedir. Spring, uygulamadaki nesnelerin yaşam döngüsünü ve bağımlılıklarını yönetmek için bir **IoC Container** kullanır ve bu nesnelere "Bean" adı verilir. Spring Bean'ler, uygulamanın farklı bileşenleri arasındaki bağımlılıkların çözülmesinde önemli bir rol oynar.
+
+---
+
+### Spring Bean'in Temel Özellikleri
+
+1. **Spring IoC Container Tarafından Yönetilir**  
+   Spring Bean'ler, IoC Container tarafından oluşturulur, yapılandırılır ve yönetilir. Bu süreçte, uygulamanın çalışma zamanındaki bağımlılıkları da çözülür.
+
+2. **Kapsam (Scope)**  
+   Spring Bean'ler belirli bir kapsamda tanımlanabilir. Varsayılan olarak `singleton` kapsamına sahiptir, yani bir sınıfın yalnızca tek bir örneği oluşturulur ve tüm uygulama boyunca paylaşılır. Diğer kapsamlar şunlardır:
+  - **prototype**: Her talepte yeni bir bean oluşturulur.
+  - **request**: Her HTTP isteği için yeni bir bean oluşturulur.
+  - **session**: Her HTTP oturumu için yeni bir bean oluşturulur.
+  - **application**: Web uygulaması bağlamında tüm uygulama için tek bir bean oluşturulur.
+  - **websocket**: WebSocket oturumu başına bir bean oluşturulur.
+
+3. **Yapılandırma Yöntemleri**  
+   Spring Bean'ler şu yollarla tanımlanabilir:
+  - XML yapılandırması
+  - Java tabanlı yapılandırma (Java Config)
+  - Anotasyonlar (@Component, @Bean, @Service, @Repository gibi)
+
+4. **Yaşam Döngüsü**  
+   Spring Bean'lerin yaşam döngüsü şu aşamaları içerir:
+  - Oluşturulma
+  - Başlatma (Initialization)
+  - Kullanım
+  - Yok edilme (Destruction)
+
+---
+
+### Spring Bean Nasıl Tanımlanır?
+
+#### 1. **XML Konfigürasyonu ile Bean Tanımlama**
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="myBean" class="com.example.MyClass"/>
+</beans>
+```
+- `id`: Bean'e atanacak benzersiz isimdir.
+- `class`: Bean'in temsil ettiği sınıfın tam adıdır.
+
+#### 2. **Java Config ile Bean Tanımlama**
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MyClass myBean() {
+        return new MyClass();
+    }
+}
+```
+- `@Configuration`: Bu sınıfın bir konfigürasyon sınıfı olduğunu belirtir.
+- `@Bean`: Bu metot, bir bean'in tanımını sağlar ve Spring IoC Container tarafından yönetilir.
+
+#### 3. **Anotasyon ile Bean Tanımlama**
+```java
+@Component
+public class MyClass {
+}
+```
+Spring IoC Container, sınıfları otomatik olarak keşfetmek için `@ComponentScan` kullanır.
+```java
+@Configuration
+@ComponentScan(basePackages = "com.example")
+public class AppConfig {
+}
+```
+
+---
+
+### Spring Bean Yaşam Döngüsü
+
+1. **Oluşturma**  
+   Bean, IoC Container tarafından oluşturulur.
+2. **Bağımlılık Yerleştirme (Dependency Injection)**  
+   Bean'lerin bağımlılıkları otomatik olarak çözülür ve yerleştirilir.
+3. **Başlatma**  
+   `@PostConstruct` anotasyonu veya özel bir `init-method` ile başlatma işlemleri yapılabilir.
+4. **Kullanım**  
+   Bean, uygulamanın geri kalanında kullanılabilir.
+5. **Yok Edilme**  
+   Bean'in yaşam döngüsü tamamlandığında, `@PreDestroy` anotasyonu veya özel bir `destroy-method` ile yok edilme işlemleri yapılır.
+
+---
+
+### Spring Bean Kullanımı
+
+#### Örnek: `@Component` ve `@Autowired` ile Kullanım
+```java
+@Component
+public class MyService {
+    public void performTask() {
+        System.out.println("Görev yerine getirildi.");
+    }
+}
+
+@Component
+public class MyController {
+
+    private final MyService myService;
+
+    @Autowired
+    public MyController(MyService myService) {
+        this.myService = myService;
+    }
+
+    public void execute() {
+        myService.performTask();
+    }
+}
+```
+- `@Component`: Sınıfı Spring Bean olarak tanımlar.
+- `@Autowired`: Bean bağımlılıklarının otomatik olarak enjekte edilmesini sağlar.
+
+---
+
+### Spring Bean Kapsamları
+
+#### 1. **Singleton (Varsayılan Kapsam)**
+Tüm uygulama boyunca aynı nesne kullanılır.
+   ```java
+   @Scope("singleton")
+   ```
+
+#### 2. **Prototype**
+Her talepte yeni bir nesne oluşturulur.
+   ```java
+   @Scope("prototype")
+   ```
+
+#### 3. **Request**
+Her HTTP isteği için yeni bir nesne oluşturulur.
+   ```java
+   @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+   ```
+
+#### 4. **Session**
+Her HTTP oturumu için yeni bir nesne oluşturulur.
+   ```java
+   @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+   ```
+
+---
+
+### Bean Yaşam Döngüsü Yönetiminde Özel Metotlar
+
+#### `@PostConstruct` ve `@PreDestroy` Kullanımı
+```java
+@Component
+public class MyBean {
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Bean başlatıldı.");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        System.out.println("Bean yok edildi.");
+    }
+}
+```
+
+#### `init-method` ve `destroy-method` ile Kullanım
+```xml
+<bean id="myBean" class="com.example.MyClass" init-method="init" destroy-method="cleanup"/>
+```
+```java
+public class MyClass {
+    public void init() {
+        System.out.println("Başlatma işlemi.");
+    }
+
+    public void cleanup() {
+        System.out.println("Temizlik işlemi.");
+    }
+}
+```
+
+---
+
+### Spring Bean'lerin Avantajları
+
+1. **Bağımlılık Yönetimi**  
+   Nesnelerin bağımlılıklarını manuel olarak yönetme ihtiyacını ortadan kaldırır.
+
+2. **Modülerlik ve Test Edilebilirlik**  
+   Bean'ler modüler bir yapı sunar ve birim testlerini kolaylaştırır.
+
+3. **Kapsam Yönetimi**  
+   Bean'in yaşam döngüsü kapsamı kolayca tanımlanabilir.
+
+4. **Konfigürasyon Esnekliği**  
+   XML, Java Config ve Anotasyon tabanlı yapılandırmalar ile esneklik sağlar.
+
+---
+
+Spring Bean, Spring Framework'ün temel yapı taşlarından biridir ve uygulamanın esnek, modüler ve test edilebilir olmasını sağlar. Bean'lerin yaşam döngüsü ve bağımlılık yönetimi, modern yazılım geliştirme süreçlerini büyük ölçüde kolaylaştırır.
