@@ -1,6 +1,149 @@
 # Techcareer 2025 Backend-1 Spring Boot
 [GitHub Address](https://github.com/hamitmizrak/techcareer_2025_backend_1.git)
 ---
+
+`@Column` anotasyonu içinde doğrudan bir varsayılan değer tanımlamak için, veritabanında kullanılan **SQL default değeri** belirtilebilir. Ancak, JPA'nın kendisi Java alanına doğrudan bir varsayılan değer atanmasını desteklemez. Bunun yerine, **veritabanı seviyesinde** varsayılan bir değer tanımlayabilirsiniz.
+
+Aşağıda `@Column` içinde varsayılan değer kullanımı gösterilmiştir:
+
+---
+
+### Veritabanı Seviyesinde Varsayılan Değer Atama
+
+```java
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "addresses")
+public class AddressEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "description", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'Default description'")
+    private String description;
+
+    // Varsayılan yapıcı
+    public AddressEntity() {}
+
+    // Getter ve Setter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
+```
+
+---
+
+### Açıklamalar
+
+- **`columnDefinition`**:
+    - `columnDefinition` özelliği, sütunun veritabanında nasıl oluşturulacağını belirtir.
+    - Bu örnekte, `description` alanı için varsayılan değer `"Default description"` olarak tanımlandı.
+
+- **Veritabanı Üzerinde Oluşturulan SQL**:
+    - JPA bu alan için veritabanında şu SQL sorgusunu oluşturur:
+      ```sql
+      CREATE TABLE addresses (
+          id BIGINT AUTO_INCREMENT NOT NULL,
+          description VARCHAR(255) DEFAULT 'Default description',
+          PRIMARY KEY (id)
+      );
+      ```
+
+- **Dikkat Edilmesi Gerekenler**:
+    - `columnDefinition` kullanımı veritabanına bağlıdır. Örneğin, MySQL, PostgreSQL veya başka bir veritabanı motoru kullanıyorsanız, `DEFAULT` ifadesinin desteklenip desteklenmediğini kontrol etmelisiniz.
+    - Java kodunda varsayılan değeri değiştirdiğinizde, bu değişiklik veritabanına otomatik olarak yansımayabilir. Bu nedenle, **schema migration** araçları (ör. Flyway, Liquibase) kullanmanız önerilir.
+
+---
+
+### Java Seviyesinde Varsayılan Değerle Kombinasyon
+
+Eğer hem Java seviyesinde hem de veritabanı seviyesinde varsayılan değer kullanmak istiyorsanız, şu şekilde birleştirebilirsiniz:
+
+```java
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "addresses")
+public class AddressEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "description", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'Default description'")
+    private String description = "Default description"; // Java seviyesi varsayılan
+
+    // Varsayılan yapıcı
+    public AddressEntity() {}
+
+    @PrePersist
+    private void setDefaultDescription() {
+        if (this.description == null || this.description.isEmpty()) {
+            this.description = "Default description"; // @PrePersist ile kontrol
+        }
+    }
+
+    // Getter ve Setter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
+```
+
+---
+
+### Çalışma Prensibi
+
+- **Java Seviyesi**:
+    - Java'da `description` alanına bir değer atanmazsa, varsayılan olarak `"Default description"` değeri atanır.
+- **Veritabanı Seviyesi**:
+    - Eğer `description` sütununa bir değer belirtilmeden kayıt oluşturulursa, veritabanı `"Default description"` değerini kullanır.
+
+---
+
+### Örnek Kullanım
+
+```java
+AddressEntity address = new AddressEntity();
+System.out.println(address.getDescription()); // "Default description"
+```
+
+---
+
+### Özet
+
+- **@Column** ile `columnDefinition` kullanarak veritabanında varsayılan değer belirtebilirsiniz.
+- Java seviyesinde varsayılan değer tanımlayarak, uygulama seviyesinde tutarlılık sağlayabilirsiniz.
+- Her iki yöntemin bir arada kullanımı, hem uygulama hem de veritabanı tarafında varsayılan değerlerin yönetimini kolaylaştırır.
+
+---
 ### **@PrePersist** Anotasyonu Nedir?
 
 `@PrePersist`, bir **Entity** veritabanına ilk kez kaydedilmeden önce çağrılan bir JPA yaşam döngüsü (lifecycle) olayını temsil eder. Bu anotasyon, bir **Entity** nesnesi üzerinde belirli işlemleri otomatik olarak gerçekleştirmek için kullanılır. Özellikle, bir kaydın oluşturulmasından hemen önce, bazı alanların varsayılan değerlerle doldurulması veya iş kurallarına göre ayarlanması gerektiğinde kullanılır.
