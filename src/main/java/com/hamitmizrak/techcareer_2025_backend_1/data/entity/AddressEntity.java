@@ -15,7 +15,9 @@ import lombok.*;
 // ENTITY
 @Entity(name = "Addresses") // name="Addresses" => Relation için name yazdım
 @Table(
-        name = "addresses", // name="addresses" => Database tablo adı için ekledim
+        name = "addresses" // name="addresses" => Database tablo adı için ekledim
+        /*
+        ,
         schema = "public", // Postgresql vb yapılarında şema yapısını destekleten veri tablarında tabloya erişim için kullanılır.
         catalog = "blog", //  Mysql vb gibi veritabanlarında kullanırız.
         indexes = {  // Sık sorgulanan sutunlarda indeksleme yaparak veritabanı sorgu performansını artırır.
@@ -25,6 +27,7 @@ import lombok.*;
         uniqueConstraints = { //
                 @UniqueConstraint(columnNames = {"address_qr_code"}) //=> benzersiz sutun verisi için
         }
+        */
 )
 
 // AddressEntity(1) - CustomerEntity(1)
