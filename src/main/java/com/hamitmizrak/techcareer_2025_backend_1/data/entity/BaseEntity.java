@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 // LOMBOK
@@ -67,5 +68,18 @@ abstract public class BaseEntity extends AuditingAwareBaseDto implements Seriali
             length = 20,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     protected Date systemCreatedDate;
+
+    // @PrePersist: Entity içinde veritabanında ilk kez kaydedilemden daha öncesinden çağrılan JPA yaşam döngüsüsü olayını temsil edecektir.
+    // Amaç: Varsayılan değerler vermek
+    // Kullanımı: void türünden olmalıdır.
+    // Access Modifier: private, protected, public. kullanabilirsiniz.
+    @PrePersist
+    private void prePersist() {
+        // Varsayılan değerler atanması
+        if (this.systemCreatedDate == null) {
+            this.systemCreatedDate = new Date(System.currentTimeMillis());
+            //this.systemCreatedDate= LocalDateTime.now();
+        }
+    }
 
 } //end BaseDto
