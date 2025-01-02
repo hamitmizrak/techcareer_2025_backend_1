@@ -17,8 +17,8 @@ import java.util.TimeZone;
 // @EnableAsync
 
 // SCAN
-//@EntityScan(basePackages = "com.hamitmizrak.innova_springboot.data.entity") //Entity bulamadığı zaman
-//@EnableJpaRepositories(basePackages = "com.hamitmizrak.innova_springboot.data.repository") //Repository bulamadığı zaman
+//@EntityScan(basePackages = "com.hamitmizrak.techcareer_2025_backend_1.data.entity") //Entity bulamadığı zaman
+//@EnableJpaRepositories(basePackages = "com.hamitmizrak.techcareer_2025_backend_1.data.repository") //Repository bulamadığı zaman
 //@ComponentScan("com")
 
 // Spring Cache aktif etmek gerekiyor.
