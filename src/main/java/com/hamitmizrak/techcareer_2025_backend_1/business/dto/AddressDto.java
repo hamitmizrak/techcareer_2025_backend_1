@@ -13,8 +13,39 @@ import lombok.*;
 
 
 // Validation: jakarta.validation.constraints.NotEmpty;
-// @NotEmpty : Diziler, Koleksiyonlar, String yapıların boş olup olmadığını doğrulamak için kullanıyoruz
-// @NotBlank : Sadece String yapıların boş olup olmadığını doğrulamak için kullanıyoruz
+
+// @NotNull, @NotBlank, @NotEmpty(Genellikle bunu kullanırız çünkü en geniş özellikli)
+/*
+Spring Boot'ta kullanılan kullanılan @NotEmpty, @NotBlank, @NotNull anatasyonları Bean validation bir koludur.
+Giriş verilerini doğrulamak için Validation(Doğrulama) kullanırız.
+
+UNUTMA: Boşluk bir karaktertir null ile karıştırmayınız.
+UNUTMA: Primitive türlerde null kullanılmaz. (e.g) byte,short,int,long, boolean, char, float,double
+UNUTMA: Wrapper türlerde null kullanabilirsiniz. (e.g) Byte,Short,Integer,Long, Boolean, Character, Float,Double
+
+
+1-) @NotNull  : Sadece Null olup olmaması
+Bir input'ta null olup olmadığını kontrol etmek için kullanılır.
+Eğer null ise hata verir.
+Sadece Wrapper type için kullanılır ve primitive türlerde kullanamayız.
+
+@NotNull
+private String name;
+name =null ise çalışır.
+
+2-) @NotBlank : Hem Null olup olmaması hemde boşluk için kontrol sağlar
+Sadece String yapıların boş olup olmadığını doğrulamak için kullanıyoruz.
+private String name;
+name =null, name="", name ise çalışır.
+
+3-) @NotEmpty : Hem Null olup olmaması hemde boşluk için kontrol sağlar
+Diziler, Koleksiyonlar, String yapıların boş olup olmadığını doğrulamak için kullanıyoruz
+
+private String name;
+name =null, name="", name ise çalışır.
+
+ */
+
 
 // AddressDto(1) - CustomerDto(1)
 public class AddressDto extends BaseDto{

@@ -26,7 +26,7 @@ import java.io.Serializable;
 @EntityListeners(AuditingEntityListener.class)
 
 // Backtend'ten Frontend'e Verilerin görünmemesi için:
-@JsonIgnoreProperties(value = {"created_date","last_modified_date"},allowGetters = true)
+// @JsonIgnoreProperties(value = {"created_date","last_modified_date"},allowGetters = true)
 abstract  public class AuditingAwareBaseEntity implements Serializable {
 
     // SERILEŞTIRME
@@ -36,25 +36,25 @@ abstract  public class AuditingAwareBaseEntity implements Serializable {
     // Kim ekledi
     @CreatedBy
     @Column(name="created_by")
-    @JsonIgnore // Backentend'ten Frontend'e veri gönderme
+    //@JsonIgnore // Backentend'ten Frontend'e veri gönderme
     protected String createdBy;
 
     // Kim ne zaman ekledi
     @CreatedDate
     @Column(name="created_date")
-    @JsonIgnore // Backentend'ten Frontend'e veri gönderme
+    //@JsonIgnore // Backentend'ten Frontend'e veri gönderme
     protected String createdDate;
 
     // Kim güncelledi
     @LastModifiedBy
     @Column(name="last_modified_by")
-    @JsonIgnore // Backentend'ten Frontend'e veri gönderme
+    //@JsonIgnore // Backentend'ten Frontend'e veri gönderme
     protected String lastModifiedBy;
 
     // Kim ne zaman güncelledi
     @LastModifiedDate
     @Column(name="last_modified_date")
-    @JsonIgnore // Backentend'ten Frontend'e veri gönderme
+    //@JsonIgnore // Backentend'ten Frontend'e veri gönderme
     protected String lastModifiedDate;
 
 } //end AuditingAwareBaseEntity
