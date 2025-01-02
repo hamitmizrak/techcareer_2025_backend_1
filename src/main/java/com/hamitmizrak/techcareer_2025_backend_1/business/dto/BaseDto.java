@@ -23,4 +23,4 @@ abstract public class BaseDto extends AuditingAwareBaseDto implements Serializab
 
     // DATE
     protected Date systemCreatedDate;
-}
+} //end BaseDto

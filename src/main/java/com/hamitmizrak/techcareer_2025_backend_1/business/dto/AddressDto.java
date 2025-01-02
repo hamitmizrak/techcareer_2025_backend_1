@@ -13,8 +13,8 @@ import lombok.*;
 
 
 // Validation: jakarta.validation.constraints.NotEmpty;
-
 // @NotNull, @NotBlank, @NotEmpty(Genellikle bunu kullanırız çünkü en geniş özellikli)
+
 /*
 Spring Boot'ta kullanılan kullanılan @NotEmpty, @NotBlank, @NotNull anatasyonları Bean validation bir koludur.
 Giriş verilerini doğrulamak için Validation(Doğrulama) kullanırız.
@@ -43,8 +43,7 @@ Diziler, Koleksiyonlar, String yapıların boş olup olmadığını doğrulamak 
 
 private String name;
 name =null, name="", name ise çalışır.
-
- */
+*/
 
 
 // AddressDto(1) - CustomerDto(1)
@@ -85,4 +84,4 @@ public class AddressDto extends BaseDto{
     // ADDRESS QR CODE
     @NotEmpty(message = "{address.qr_code.validation.constraints.NotNull.message}")
     private String addressQrCode;
-}
+} //end AddressDto
