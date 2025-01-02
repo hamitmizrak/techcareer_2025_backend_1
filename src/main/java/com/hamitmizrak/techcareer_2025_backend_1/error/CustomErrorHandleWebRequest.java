@@ -1,6 +1,5 @@
 package com.hamitmizrak.techcareer_2025_backend_1.error;
 
-import com.hamitmizrak.techcareer_2025_backend_1.exception.HamitMizrakException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
