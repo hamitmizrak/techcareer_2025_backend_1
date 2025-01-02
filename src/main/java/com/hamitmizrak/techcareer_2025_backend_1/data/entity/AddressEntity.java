@@ -36,6 +36,13 @@ public class AddressEntity extends BaseEntity {
     @Embedded
     private AddressEntityDetailsEmbeddable detailsEmbeddable;
 
+    // Soft Delete (Yumuşak Silme)
+    // Verileri silmek database çok doğru bir davranış değildir.
+    // Bunun yerine kullanıcıya silindiği gösterip database
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+
     // Database tablosundaki sutunlarda olmasın ancak Java Class'larında olsun
     @Transient
     private String temporaryData;

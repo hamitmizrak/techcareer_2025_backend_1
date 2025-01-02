@@ -84,4 +84,9 @@ public class AddressDto extends BaseDto{
     // ADDRESS QR CODE
     @NotEmpty(message = "{address.qr_code.validation.constraints.NotNull.message}")
     private String addressQrCode;
+
+    // Soft Delete (Yumuşak Silme)
+    // Verileri silmek database çok doğru bir davranış değildir.
+    // Bunun yerine kullanıcıya silindiği gösterip database
+    private Boolean isDeleted = false;
 } //end AddressDto
