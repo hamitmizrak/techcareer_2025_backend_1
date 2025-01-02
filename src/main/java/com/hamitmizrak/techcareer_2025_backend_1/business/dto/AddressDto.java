@@ -4,13 +4,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-// LOMBOK
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-
 
 // Validation: jakarta.validation.constraints.NotEmpty;
 // @NotNull, @NotBlank, @NotEmpty(Genellikle bunu kullanırız çünkü en geniş özellikli)
@@ -44,6 +37,13 @@ Diziler, Koleksiyonlar, String yapıların boş olup olmadığını doğrulamak 
 private String name;
 name =null, name="", name ise çalışır.
 */
+
+// LOMBOK
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 
 // AddressDto(1) - CustomerDto(1)
