@@ -7,6 +7,17 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+// Yapılacaklar
+// Service
+// Api
+// Swagger
+// H2DB
+// Postman
+// Runner
+// CustomerDto-----
+// Relation (AddressDto -  CustomerDto )
+
+
 public class AddresServiceImpl implements IAddressService<AddressDto, AddressEntity> {
     @Override
     public AddressDto objectServiceCreate(AddressDto addressDto) {
