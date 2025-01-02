@@ -89,4 +89,7 @@ public class AddressDto extends BaseDto{
     // Verileri silmek database çok doğru bir davranış değildir.
     // Bunun yerine kullanıcıya silindiği gösterip database
     private Boolean isDeleted = false;
+
+    // Locking
+    private int version;
 } //end AddressDto
