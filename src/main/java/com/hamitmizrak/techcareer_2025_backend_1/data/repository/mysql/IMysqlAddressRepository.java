@@ -1,8 +1,9 @@
-package com.hamitmizrak.techcareer_2025_backend_1.data.repository;
+package com.hamitmizrak.techcareer_2025_backend_1.data.repository.mysql;
 
 import com.hamitmizrak.techcareer_2025_backend_1.data.entity.AddressEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
 // CrudRepository<AddressEntity,Long>
@@ -10,7 +11,7 @@ import java.util.Optional;
 // JpaRepository<AddressEntity,Long>
 
 @Repository
-public interface IAddressRepository extends JpaRepository<AddressEntity,Long> {
+public interface IMysqlAddressRepository extends JpaRepository<AddressEntity,Long> {
 
     /*
     Dikkat: IRepository Delivered Query için `detailsEmbeddable.address` şeklinde yazalır.
@@ -20,7 +21,7 @@ public interface IAddressRepository extends JpaRepository<AddressEntity,Long> {
 
     // Delivered Query
     // Embbedable ile çalıştığımızda underscore(_) eklenir.
-    Optional<AddressEntity> findAddressEntitiesByAddressEntityDetailsEmbeddable_AddressQrCode(String qrCode);
+    Optional<AddressEntity> findAddressEntitiesByDetailsEmbeddableAddressQrCode (String qrCode);
 
     // JPQL
     // Native Query
