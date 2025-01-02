@@ -12,8 +12,20 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
+// ENTITY
 @Entity(name = "Addresses") // name="Addresses" => Relation için name yazdım
-@Table(name = "addresses")  // name="addresses" => Database tablo adı için ekledim
+@Table(
+        name = "addresses", // name="addresses" => Database tablo adı için ekledim
+        schema = "public", // Postgresql vb yapılarında şema yapısını destekleten veri tablarında tabloya erişim için kullanılır.
+        catalog = "blog", //  Mysql vb gibi veritabanlarında kullanırız.
+        indexes = {  // Sık sorgulanan sutunlarda indeksleme yaparak veritabanı sorgu performansını artırır.
+                @Index(name = "idx_address_city", columnList = "city", unique = false),
+                @Index(name = "idx_address_state", columnList = "state", unique = false), //default:false ancak true yaparsak: Indeksin benzersiz olmasını sağlar
+        },
+        uniqueConstraints = { //
+                @UniqueConstraint(columnNames = {"address_qr_code"}) //=> benzersiz sutun verisi için
+        }
+)
 
 // AddressEntity(1) - CustomerEntity(1)
 public class AddressEntity extends BaseEntity {
