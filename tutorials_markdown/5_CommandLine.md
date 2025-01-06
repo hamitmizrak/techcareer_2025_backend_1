@@ -294,3 +294,227 @@ public class CommandLineArgsRunner implements CommandLineRunner {
 ### Sonuç
 
 **CommandLineRunner**, Spring Boot uygulamalarında başlangıç işlemleri için kullanışlı bir araçtır. Uygulamanın lifecycle'ına entegre olduğu için herhangi bir bağımlılığı kolayca kullanabilirsiniz. Özellikle veri yükleme, başlangıç konfigürasyonları ve test işlemleri için idealdir. Ayrıca, `@Order` ile birden fazla runner'ın sırasını kontrol edebilir, hata yönetimi ile daha güvenilir bir başlangıç mekanizması oluşturabilirsiniz.
+
+# 
+İncelediğiniz bu iki CommandLineRunner sınıfına (yani `_1_DataLoadingSet` ve `_2_DataLoadingSet`) dayanarak, başka CommandLineRunner sınıfları yazarken farklı senaryolar için aşağıdaki fikirler ve önerilerden faydalanabilirsiniz:
+
+---
+
+### **1. Veritabanı Başlangıç Verilerini Yükleme**
+Uygulama başlatıldığında test veya varsayılan başlangıç verilerini yüklemek için bir CommandLineRunner yazabilirsiniz. Örneğin, kullanıcı, rol veya ürün verilerini bir tabloya eklemek için:
+
+```java
+@Component
+@Order(3)
+public class UserDataLoader implements CommandLineRunner {
+
+    private final UserRepository userRepository;
+
+    public UserDataLoader(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("3- Kullanıcı verileri yükleniyor...");
+
+        UserEntity user = new UserEntity();
+        user.setFirstName("Hamit");
+        user.setLastName("Mızrak");
+        user.setEmail("hamit@example.com");
+
+        userRepository.save(user);
+        System.out.println("Kullanıcı başarıyla yüklendi.");
+    }
+}
+```
+
+---
+
+### **2. Dış Sistemlerle Bağlantı Kontrolü**
+Dış bir sistem veya API ile entegrasyon sağlıyorsanız, uygulama başlatıldığında bu bağlantının kontrol edilmesini sağlayabilirsiniz.
+
+```java
+@Component
+@Order(4)
+public class ApiHealthCheckRunner implements CommandLineRunner {
+
+    private final ApiService apiService;
+
+    public ApiHealthCheckRunner(ApiService apiService) {
+        this.apiService = apiService;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("4- API bağlantısı kontrol ediliyor...");
+        boolean isHealthy = apiService.checkHealth();
+        if (isHealthy) {
+            System.out.println("API bağlantısı başarılı.");
+        } else {
+            System.err.println("API bağlantısı başarısız!");
+        }
+    }
+}
+```
+
+---
+
+### **3. Cache Temizleme veya Hazırlama**
+Eğer uygulama önbellek (cache) mekanizması kullanıyorsa, uygulama başlatıldığında cache’i temizlemek veya başlangıç verilerini yüklemek için bir CommandLineRunner kullanabilirsiniz.
+
+```java
+@Component
+@Order(5)
+public class CacheInitializer implements CommandLineRunner {
+
+    private final CacheService cacheService;
+
+    public CacheInitializer(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("5- Cache temizleniyor...");
+        cacheService.clearAll();
+        System.out.println("Cache başarıyla temizlendi ve başlatıldı.");
+    }
+}
+```
+
+---
+
+### **4. Loglama Mekanizmasının Test Edilmesi**
+Loglama altyapısını kontrol etmek ve sistemdeki belirli log seviyelerini test etmek için bir CommandLineRunner yazabilirsiniz.
+
+```java
+@Component
+@Order(6)
+public class LoggingTestRunner implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("6- Loglama sistemi test ediliyor...");
+        log.debug("DEBUG: Debug mesajı");
+        log.info("INFO: Bilgilendirme mesajı");
+        log.warn("WARN: Uyarı mesajı");
+        log.error("ERROR: Hata mesajı");
+    }
+}
+```
+
+---
+
+### **5. Konfigürasyon Doğrulama**
+Uygulama başlatıldığında belirli bir konfigürasyonun doğru olup olmadığını kontrol edebilirsiniz.
+
+```java
+@Component
+@Order(7)
+public class ConfigurationValidator implements CommandLineRunner {
+
+    private final AppProperties appProperties;
+
+    public ConfigurationValidator(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("7- Konfigürasyon doğrulaması yapılıyor...");
+        if (appProperties.getApiKey() == null || appProperties.getApiKey().isEmpty()) {
+            throw new IllegalStateException("API anahtarı eksik!");
+        }
+        System.out.println("Konfigürasyon geçerli.");
+    }
+}
+```
+
+---
+
+### **6. Komut Satırı Argümanlarını İşleme**
+CommandLineRunner, komut satırından alınan argümanlarla uygulamanın davranışını özelleştirmek için kullanılabilir.
+
+```java
+@Component
+@Order(8)
+public class CommandLineArgProcessor implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("8- Komut satırı argümanları işleniyor...");
+        for (String arg : args) {
+            System.out.println("Argüman: " + arg);
+            if (arg.equalsIgnoreCase("--loadTestData")) {
+                System.out.println("Test verileri yükleniyor...");
+                // Test verilerini yükle
+            }
+        }
+    }
+}
+```
+
+---
+
+### **7. Zamanlanmış Görevlerin Hazırlanması**
+Eğer uygulamanızda zamanlanmış görevler çalıştırıyorsanız, bu görevlerin düzgün çalıştığından emin olmak için bir başlangıç kontrolü yapabilirsiniz.
+
+```java
+@Component
+@Order(9)
+public class ScheduledTaskInitializer implements CommandLineRunner {
+
+    private final TaskSchedulerService taskSchedulerService;
+
+    public ScheduledTaskInitializer(TaskSchedulerService taskSchedulerService) {
+        this.taskSchedulerService = taskSchedulerService;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("9- Zamanlanmış görevler kontrol ediliyor...");
+        taskSchedulerService.verifyTasks();
+        System.out.println("Tüm zamanlanmış görevler başarıyla kontrol edildi.");
+    }
+}
+```
+
+---
+
+### **8. Kullanıcı Rolleri ve Yetkilendirme Verileri**
+Uygulama başlatıldığında kullanıcı rolleri ve yetkilendirme verilerinin yüklenmesi:
+
+```java
+@Component
+@Order(10)
+public class RoleInitializer implements CommandLineRunner {
+
+    private final RoleRepository roleRepository;
+
+    public RoleInitializer(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("10- Kullanıcı rolleri yükleniyor...");
+
+        Role adminRole = new Role();
+        adminRole.setName("ADMIN");
+        roleRepository.save(adminRole);
+
+        Role userRole = new Role();
+        userRole.setName("USER");
+        roleRepository.save(userRole);
+
+        System.out.println("Roller başarıyla yüklendi.");
+    }
+}
+```
+
+---
+
+### **Sonuç**
+
+Yukarıdaki önerilerden biri veya birkaçı, sisteminizin gereksinimlerine göre uygulanabilir. Uygulamanızın farklı başlangıç işlemleri (veritabanı, cache, API kontrolü, kullanıcı rolleri vb.) için bu örneklerden ilham alabilirsiniz. Hangi işlemi yapıyorsanız, `CommandLineRunner`’ı sadece o göreve özel hale getirerek düzenli ve sürdürülebilir bir kod yapısı oluşturabilirsiniz.

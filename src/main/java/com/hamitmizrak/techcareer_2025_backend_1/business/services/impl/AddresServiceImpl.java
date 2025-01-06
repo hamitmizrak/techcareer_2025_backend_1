@@ -3,23 +3,26 @@ package com.hamitmizrak.techcareer_2025_backend_1.business.services.impl;
 import com.hamitmizrak.techcareer_2025_backend_1.bean.ModelMapperBean;
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.AddressDto;
 import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IAddressService;
+import com.hamitmizrak.techcareer_2025_backend_1.data.embedded.AddressEntityDetailsEmbeddable;
 import com.hamitmizrak.techcareer_2025_backend_1.data.entity.AddressEntity;
 import com.hamitmizrak.techcareer_2025_backend_1.data.mapper.AddressMapper;
 import com.hamitmizrak.techcareer_2025_backend_1.data.repository.IAddressRepository;
 import com.hamitmizrak.techcareer_2025_backend_1.exception.HamitMizrakException;
+import com.hamitmizrak.techcareer_2025_backend_1.exception._404_NotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.webjars.NotFoundException;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -167,61 +170,164 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
         return addressDtoList;
     }
 
-    // FIND (Address)
+    // FIND BY ID (Address)
+    // REDIS : için aşağıdaki linktten çalışıp çalışmadığını bu linkten anlayabiliriz
+    // http://localhost:4444/api/address/v1.0.0/find/1
+    @Cacheable(value = "addressFindByIdCache", key = "#id")
     @Override
     public AddressDto objectServiceFindById(Long id) {
-        return null;
+        // AddressEntity (1.YOL Optional)
+        /*
+        Boolean addressEntityBoolean = iAddressRepository.findById(id).isEmpty();
+        if(addressEntityBoolean && ) {
+            return AddressMapper.AddressEntityToAddressDto(iAddressRepository.findById(id).get());
+        }else{
+            throw new NotFoundException("null pointer exception message");
+        }
+        */
+
+        // AddressEntity (2.YOL Optional)
+        //return AddressMapper.AddressEntityToAddressDto(iAddressRepository.findById(id).orElse(null));
+        // AddressEntity (3.YOL Optional)
+        AddressDto addressDtoFind = iAddressRepository
+                .findById(id)
+                .map(AddressMapper::AddressEntityToAddressDto)
+                .orElseThrow(() -> new _404_NotFoundException(id + " nolu veri yoktur."));
+        if (addressDtoFind.getIsDeleted()) {
+            System.out.println("Aradığınız Veri bulunmamaktadır.");
+        }
+            return addressDtoFind;
     }
 
     // UPDATE (Address)
     @Override
     @Transactional // Manipulation for process: Create, Delete, Update
     public AddressDto objectServiceUpdate(Long id, AddressDto addressDto) {
-        if (addressDto != null) {
 
-        } else {
-            throw new NotFoundException("null pointer exception message");
-        }
-        return null;
+        // Öncelelikle ilgili Adresi ID ile bulalım
+        AddressEntity addressEntityUpdate = dtoToEntity(objectServiceFindById(id));
+
+        // Embeddable Set
+        AddressEntityDetailsEmbeddable detailsEmbeddable = new AddressEntityDetailsEmbeddable();
+        detailsEmbeddable.setState(addressDto.getState());
+        detailsEmbeddable.setCity(addressDto.getCity());
+        detailsEmbeddable.setCountry(addressDto.getCountry());
+        detailsEmbeddable.setStreet(addressDto.getStreet());
+        detailsEmbeddable.setDescription(addressDto.getDescription());
+        detailsEmbeddable.setZipCode(addressDto.getZipCode());
+        detailsEmbeddable.setDoorNumber(addressDto.getDoorNumber());
+        detailsEmbeddable.setAvenue(addressDto.getAvenue());
+        detailsEmbeddable.setAddressQrCode(addressDto.getAddressQrCode());
+
+        // Embeddable AddressEntity Set et
+        AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setId(id);
+        addressEntity.setDetailsEmbeddable(detailsEmbeddable);
+
+        // Database kaydet
+        addressDto = entityToDto(iAddressRepository.save(addressEntity));
+        return addressDto;
     }
 
     // DELETE (Address)
     @Override
-    @Transactional // Manipulation for process: Create, Delete, Update
+    // Manipulation for process: Create, Delete, Update
+    @Transactional(
+            propagation = Propagation.MANDATORY, // Mutlaka mevcut bir işlem gerektirir
+            isolation = Isolation.READ_UNCOMMITTED, // Diğer işlemlerdeki geçici değişiklikler okunabilir
+            rollbackFor = {Exception.class} // Tüm istisnalar için rollback
+    )
     public AddressDto objectServiceDelete(Long id) {
-        if (id != null) {
+        // Öncelelikle ilgili Adresi ID ile bulalım
+        AddressEntity addressEntityDelete = dtoToEntity(objectServiceFindById(id));
 
-        } else {
-            throw new NotFoundException("null pointer exception message");
-        }
-        return null;
+        // isterseniz soft delete(Yani database silme sadece kulalnıcı veriye ulaşmasın) Database sil
+        //iAddressRepository.delete(addressEntityDelete);
+        // Soft Delete
+        addressEntityDelete.setIsDeleted(false);
+
+        return entityToDto(addressEntityDelete);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ROOT (Spring MVC)
+    // http://localhost:4444/api/address
+    // http://localhost:4444/api/address/index
+    // Thymeleaf, React veya Angular için gerekli olabiliyor.
+    @GetMapping("/index")
+    public ResponseEntity<?> getRoot() {
+        return ResponseEntity.ok("index");
+    }
 
     ////////////////////////////////////////////////////////////////
     // PAGE & SORT
-    // PAGINATION (Address)
+    // PAGE
+    // import org.springframework.cache.annotation.Cacheable;
+    // REDIS : key için eğer parametreler varsa ekleyelim.
+    @Cacheable(value = "addressPaginationCache", key = "#currentPage + '-' + #pageSize")
     @Override
     public Page<AddressDto> objectServicePagination(int currentPage, int pageSize) {
-        return null;
-    }
 
-    // SORT (Address)
+        System.out.println("Redis Data ");
+        // import org.springframework.data.domain.Pageable;
+        // Pageable nesnesini oluştur
+        Pageable pageable= PageRequest.of(currentPage, pageSize);
+
+        Page<AddressEntity> addressEntityPage = iAddressRepository.findAll(pageable);
+
+        /*Page<AddressDto> addressDtoPage*/
+        List<AddressDto> addressDtoPage =  iAddressRepository.findAll(pageable)
+                .stream()
+                .map(AddressMapper::AddressEntityToAddressDto)
+                .collect(Collectors.toList());
+        // DTO'ları içeren bir PageImpl oluştur
+        // Bu yapı, List türündeki DTO nesnelerini PageImpl kullanarak Page nesnesine dönüştürür.
+        // Böylece Spring Data JPA ile uyumlu bir sayfalama yapısı elde edilir.
+        // PageImpl, toplam öğe sayısını ve sayfalama bilgilerini koruyarak hem performanslı hem de düzenli bir dönüşüm sağlar.
+        return new PageImpl<>(addressDtoPage, pageable, addressEntityPage.getTotalElements());
+    }
+    /*
+    PageImpl Kullanımı
+    PageImpl, bir List türündeki veriyi Page nesnesine dönüştürmek için Spring Data JPA tarafından sağlanan bir sınıftır. PageImpl aşağıdaki durumlarda kullanılır:
+
+    Stream veya List'ten Page oluşturmak istediğinizde.
+    Orijinal Pageable bilgilerini ve toplam öğe sayısını (totalElements) korumak istediğinizde.
+    */
+
+    // SORTING (Herhangi bir kolon)
+    // REDIS :
+    @Cacheable(value = "addressSortedByCache", key = "#sortedBy")
     @Override
     public List<AddressDto> objectServiceListSortedBy(String sortedBy) {
-        return List.of();
+        return iAddressRepository.findAll(Sort.by(Sort.Direction.ASC,sortedBy))
+                .stream().map(AddressMapper::AddressEntityToAddressDto)
+                .collect(Collectors.toList());
     }
 
-    // SORT ASC (Address)
+    // SORTING (CITY ASC) Küçükten büyüğe doğru sıralama
+    // REDIS :
+    // NOT: eğer Embeddable kullanıyorsanız Entity içine yazdığınız nesne adına göre ekleyin yoksa city gibi
+    // nesnelere erişim sağlayamazsınız.
+    @Cacheable(value = "addressSortedByCityAscCache")
     @Override
     public List<AddressDto> objectServiceListSortedByAsc() {
-        return List.of();
+        // Dikkat: Eğer Embedable olmasaydı `city` yazsak yeterdi ancak `detailsEmbeddable.city` yazmalıyız
+        return iAddressRepository.findAll(Sort.by(Sort.Direction.ASC,"detailsEmbeddable.city"))
+                .stream()
+                .map(AddressMapper::AddressEntityToAddressDto)
+                .collect(Collectors.toList());
     }
 
-    // SORT DESC (Address)
+    // SORTING (CITY DESC) Büyükten küçüğe doğru sıralama
+    // REDIS :
+    @Cacheable(value = "addressSortedByCityDescCache")
     @Override
     public List<AddressDto> objectServiceListSortedByDesc() {
-        return List.of();
+        // Dikkat: Eğer Embedable olmasaydı `city` yazsak yeterdi ancak `detailsEmbeddable.city` yazmalıyız
+        return iAddressRepository.findAll(Sort.by(Sort.Direction.DESC,"detailsEmbeddable.city"))
+                .stream()
+                .map(AddressMapper::AddressEntityToAddressDto)
+                .collect(Collectors.toList());
     }
 
 } //end AddressServiceImpl
