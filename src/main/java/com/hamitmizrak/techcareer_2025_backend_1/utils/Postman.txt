@@ -1,0 +1,55 @@
+// REGISTER
+/*
+POSTMAN
+METHOD: POST
+URL   : http://localhost:4444/api/auth/register
+BODY  :
+{
+"username": "root",
+"password": "root"
+}
+*/
+
+/*
+curl -X POST http://localhost:4444/api/auth/register \
+-H "Content-Type: application/json" \
+-d '{
+"username": "root",
+"password": "root"
+}'
+*/
+
+////////////////////////////////////////
+// LOGIN (jwt token al)
+ /*
+ POSTMAN
+ METHOD: POST
+ URL   : http://localhost:4444/api/auth/login
+ BODY  :
+ {
+   "username": "root",
+   "password": "root"
+ }
+  */
+
+ /*
+ cURL
+ curl -X POST http://localhost:4444/api/auth/login \
+ -H "Content-Type: application/json" \
+ -d '{
+   "username": "root",
+   "password": "root"
+ }'
+ * */
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Postman
+// 401: Yetkisiz Giriş
+/*
+POSTMAN
+Authorization: Bearer Token <Login Aldığımız Token buraya Yapıştır>
+METHOD: GET
+URL   : http://localhost:4444/api/address/v1.0.0/find/1
+
+*/
