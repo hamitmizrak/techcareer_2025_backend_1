@@ -1,6 +1,7 @@
 package com.hamitmizrak.techcareer_2025_backend_1.runner;
 
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.AddressDto;
+import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IAddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
@@ -30,11 +31,25 @@ import org.springframework.stereotype.Component;
 public class _1_DataLoadingSet implements CommandLineRunner {
 
     // Injection
+    private final IAddressService iAddressService;
 
     // Address
     private AddressDto savedAddress(){
         System.out.println("1- Address hazırlanıyor...");
-        return null;
+        AddressDto addressDto = AddressDto.builder()
+                .addressQrCode("qr code")
+                .city("city")
+                .state("state")
+                .country("country")
+                .description("description")
+                .avenue("avenue")
+                .street("street")
+                .zipCode("zip code")
+                .doorNumber("door number")
+                .isDeleted(false)
+                .build();
+        iAddressService.objectServiceCreate(addressDto);
+        return addressDto;
     }
 
     // run

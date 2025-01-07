@@ -13,7 +13,7 @@ public interface ISortingPagingService<D,E> {
 
     // SORTING
     // Database içinde herhangi bir kolona göre yazsın
-    public List<D> objectServiceListSortedBy(String sortedBy);
+    public List<D> objectServiceListSortedByDefault(String sortedBy);
 
     // SORTING ASC
     // Database içindeki seçtiğimiz kolona göre küçükten büyüğe doğru sıralansın

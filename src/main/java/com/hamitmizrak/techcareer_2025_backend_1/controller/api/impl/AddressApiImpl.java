@@ -1,9 +1,11 @@
 package com.hamitmizrak.techcareer_2025_backend_1.controller.api.impl;
-
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.AddressDto;
 import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IAddressService;
+import com.hamitmizrak.techcareer_2025_backend_1.controller.GHandleApiresult;
 import com.hamitmizrak.techcareer_2025_backend_1.controller.api.interfaces.IAddressApi;
 import com.hamitmizrak.techcareer_2025_backend_1.error.ApiResult;
+import com.hamitmizrak.techcareer_2025_backend_1.exception.HamitMizrakException;
+import com.hamitmizrak.techcareer_2025_backend_1.exception._400_BadRequestException;
 import com.hamitmizrak.techcareer_2025_backend_1.utils.FrontEnd;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +13,21 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.;
-
-import java.util.Date;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
+
+/*
+Status Code
+CREATE	201 Created	Yeni kaynak başarıyla oluşturuldu.
+
+LIST	200 OK	Kaynaklar başarıyla listelendi.
+
+UPDATE	200 OK	Güncellenen kaynak döndürüldü.
+        204 No Content	Güncelleme başarılı, ancak yanıt yok.
+
+DELETE	204 No Content	Başarıyla silindi, ancak yanıt yok.
+        200 OK	Silme işlemi başarılı, bilgi döndürüldü.
+ */
 
 // LOMBOK
 @RequiredArgsConstructor
@@ -37,100 +49,78 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     // Api Result
     private ApiResult apiResult=new ApiResult();
 
-
     ////////////////////////////////////////////////////////////////////////////////////////
     // CRUD
 
     // CREATE (Address)
     // http://localhost:4444/api/address/v1.0.0/create
-    @PostMapping("/create")
     @Override
+    @PostMapping("/create")
     public ResponseEntity<?> objectApiCreate(@Valid @RequestBody AddressDto addressDto) {
-        try{
-            AddressDto addressDtoApiCreate = (AddressDto) iAddressService.objectServiceCreate(addressDto);
-
-            // Başarılıysa ApiResult Nesnesini oluştur
-            apiResult= ApiResult.builder()
-                    .status(201)
-                    .message("Address created successfully")
-                    .path("/api/address/v1.0.0/create")
-                    .createdDate(new Date(System.currentTimeMillis()))
-                    .build();
-
-            // ApiResult içine AddressDto eklemek ve Hataları ApiResultta set etmek
-            apiResult.setValidationErrors(Map.of("data", addressDtoApiCreate));
-            // return new ResponseEntity<>(addressDtoApiCreate,HttpStatus.CREATED);
-            // return ResponseEntity.status(201).body(addressDtoApiCreate);
-            // return ResponseEntity.status(HttpStatus.CREATED).body(addressDtoApiCreate);
-            //return ResponseEntity.ok(iAddressService.).body(addressDtoApiCreate);
-            return ResponseEntity.ok(addressDtoApiCreate);
-        }catch (Exception e){
-            // Başarısızsa ApiResult Nesnesini oluştur
-            apiResult= ApiResult.builder()
-                    .status(201)
-                    .message("Address created isnot failed")
-                    .path("/api/address/v1.0.0/create")
-                    .createdDate(new Date(System.currentTimeMillis()))
-                    .build();
-            return ResponseEntity.status(500).body(apiResult);
-        }
+      return GHandleApiresult.genericsHandleApiResult(
+              "api/address/v1.0.0/create",
+              201,
+              500,
+              ()->iAddressService.objectServiceCreate(addressDto));
     }
-
 
     // LIST (Address)
     // http://localhost:4444/api/address/v1.0.0/list
-    @GetMapping("/list")
     @Override
+    @GetMapping("/list")
     public ResponseEntity<List<AddressDto>> objectApiList() {
-        try{
-
-        }catch (Exception e){
-
-        }
-
         return ResponseEntity.ok(iAddressService.objectServiceList());
     }
 
 
     // FIND BY ID (Address)
+    // http://localhost:4444/api/address/v1.0.0/find
+    // http://localhost:4444/api/address/v1.0.0/find/0
+    // http://localhost:4444/api/address/v1.0.0/find/-1
+    // http://localhost:4444/api/address/v1.0.0/find/%20%  %20%=boşluk
     // http://localhost:4444/api/address/v1.0.0/find/1
-    @GetMapping("/find/{id}")
     @Override
+    @GetMapping({"/find/","/find/{id}"})
     public ResponseEntity<?> objectApiFindById(@PathVariable(name = "id", required = false) Long id) {
-        try{
-
-        }catch (Exception e){
-
+        if(id==null){
+            throw new NullPointerException("Null pointer exception: Null değer");
+        }else if(id==0){
+            throw new _400_BadRequestException("Bad Request Exception: Kötü istek");
+        }else if(id<0){
+            throw new HamitMizrakException("unauthorized: Yetkisiz Giriş");
         }
-        return ResponseEntity.ok(iAddressService.objectServiceFindById(id));
+        return GHandleApiresult.genericsHandleApiResult(
+                "api/address/v1.0.0/find",
+                200,
+                500,
+                ()->iAddressService.objectServiceFindById(id));
     }
 
 
     // UPDATE (Address)
     // http://localhost:4444/api/address/v1.0.0/update/1
-    @PutMapping("/update/{id}")
     @Override
-    public ResponseEntity<?> objectApiUpdate(@PathVariable(name = "id", required = false) Long id, @Valid @RequestBody AddressDto addressDto) {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.objectServiceUpdate(id, addressDto));
+    @PutMapping({"/update/","/update/{id}"})
+    public ResponseEntity<?> objectApiUpdate(
+            @PathVariable(name = "id", required = false) Long id,
+            @Valid @RequestBody AddressDto addressDto) {
+        return GHandleApiresult.genericsHandleApiResult(
+                "api/address/v1.0.0/update",
+                201,
+                500,
+                ()->iAddressService.objectServiceUpdate(id, addressDto));
     }
-
 
     // DELETE BY ID (Address)
     // http://localhost:4444/api/address/v1.0.0/delete/1
-    @DeleteMapping("/delete/{id}")
     @Override
+    @DeleteMapping({"/delete/","/delete/{id}"})
     public ResponseEntity<?> objectApiDelete(@PathVariable(name = "id", required = false) Long id) {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.objectServiceDelete(id));
+        return GHandleApiresult.genericsHandleApiResult(
+                "api/address/v1.0.0/delete",
+                200,
+                500,
+                ()->iAddressService.objectServiceDelete(id));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -138,20 +128,18 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     /*
      PathVariable ve RequestParam Arasındaki Farklar
 
-    | Özellik            | @PathVariable                                     | @RequestParam                                   |
-    |-------------------------|------------------------------------------------------|----------------------------------------------------|
-    | Amaç               | URL yolundaki bir parametreyi alır.                   | Sorgu parametrelerini (query parameters) alır.     |
+    | Özellik             | @PathVariable                                         | @RequestParam                                   |
+    |-------------------- |-------------------------------------------------------|----------------------------------------------------|
+    | Amaç                | URL yolundaki bir parametreyi alır.                   | Sorgu parametrelerini (query parameters) alır.     |
     | Kullanım Yeri       | URL'nin bir parçası olarak tanımlanır.                | URL'deki `?` işaretinden sonra gelen parametrelerle çalışır. |
-    | URL Örneği          | `/api/users/{id}`                                    | `/api/users?name=Hamit`                             |
-    | Tanımlama Şekli     | `@PathVariable("id") Long id`                        | `@RequestParam("name") String name`               |
-    | Zorunluluk          | Varsayılan olarak zorunludur (opsiyonel yapılabilir).| Varsayılan olarak zorunludur (opsiyonel yapılabilir).|
+    | URL Örneği          | `/api/users/{id}`                                     | `/api/users?name=Hamit`                             |
+    | Tanımlama Şekli     | `@PathVariable("id") Long id`                         | `@RequestParam("name") String name`               |
+    | Zorunluluk          | Varsayılan olarak zorunludur (opsiyonel yapılabilir). | Varsayılan olarak zorunludur (opsiyonel yapılabilir).|
     | Çoklu Değerler      | Sadece tek bir değer alır.                            | Birden fazla parametreyi kolayca alabilir.         |
-
 
      Örnekler
      @PathVariable Kullanımı
     URL: `/api/users/123`
-
 
     @GetMapping("/api/users/{id}")
     public ResponseEntity<String> getUserById(@PathVariable("id") Long id) {
@@ -177,49 +165,48 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     - @RequestParam: Filtreleme, sıralama veya arama gibi isteğe bağlı parametrelerle çalışmak için.
   */
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // PAGINATION
-    @GetMapping("/pagination")
+    // 1.sayfada 4 tane veri getir.
+    // http://localhost:4444/api/address/v1.0.0/pagination?current_page=0&page_size=4
     @Override
-    public ResponseEntity<Page<?>> objectServicePagination(int currentPage, int pageSize) {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.);
+    @GetMapping(value = "/pagination")
+    public ResponseEntity<Page<?>> objectServicePagination(
+           @RequestParam(name="current_page", required = false,defaultValue = "0") int currentPage,
+           @RequestParam(name="page_size", required = false,defaultValue = "0") int pageSize
+           ) {
+        return ResponseEntity.ok(iAddressService.objectServicePagination(currentPage, pageSize));
     }
 
     // SORTING (Belli Sutuna göre)
+    // Dikkat: Embedded için gerekli Entity ismini yanlış yazma
+    // @Embedded
+    // private AddressEntityDetailsEmbeddable detailsEmbeddable;
+    // http://localhost:4444/api/address/v1.0.0/sorting?sorted_by=detailsEmbeddable.city
+    // http://localhost:4444/api/address/v1.0.0/sorting?sorted_by=detailsEmbeddable.state
+    // http://localhost:4444/api/address/v1.0.0/sorting?sorted_by=detailsEmbeddable.street
     @Override
-    public ResponseEntity<List<AddressDto>> objectServiceListSortedBy(String sortedBy) {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.);
+    @GetMapping(value = "/sorting")
+    public ResponseEntity<List<AddressDto>> objectServiceListSortedBy(
+          @RequestParam(name="sorted_by", required = false,defaultValue = "detailsEmbeddable.city")  String sortedBy
+    ) {
+        return ResponseEntity.ok(iAddressService.objectServiceListSortedByDefault(sortedBy));
     }
 
-    // SORTING (Küçükten büyüğe doğru)
+    // SORTING ASC (Küçükten büyüğe doğru)
+    // http://localhost:4444/api/address/v1.0.0/sorting/city/asc
     @Override
+    @GetMapping(value = "/sorting/city/asc")
     public ResponseEntity<List<AddressDto>> objectServiceListSortedByAsc() {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.);
+        return ResponseEntity.ok(iAddressService.objectServiceListSortedByAsc());
     }
 
-    // SORTING (Büyükten küçüğe doğru)
+    // SORTING DESC (Büyükten küçüğe doğru)
+    // http://localhost:4444/api/address/v1.0.0/sorting/city/desc
     @Override
+    @GetMapping(value = "/sorting/city/desc")
     public ResponseEntity<List<AddressDto>> objectServiceListSortedByDesc() {
-        try{
-
-        }catch (Exception e){
-
-        }
-        return ResponseEntity.ok(iAddressService.);
+        return ResponseEntity.ok(iAddressService.objectServiceListSortedByDesc());
     }
 
 } // end AddressApiImpl

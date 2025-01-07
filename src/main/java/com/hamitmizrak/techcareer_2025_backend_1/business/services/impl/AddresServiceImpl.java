@@ -243,8 +243,12 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
 
         // isterseniz soft delete(Yani database silme sadece kulalnıcı veriye ulaşmasın) Database sil
         //iAddressRepository.delete(addressEntityDelete);
+
         // Soft Delete
-        addressEntityDelete.setIsDeleted(false);
+        //addressEntityDelete.setIsDeleted(false);
+
+        // Silmek
+        iAddressRepository.deleteById(id);
 
         return entityToDto(addressEntityDelete);
     }
@@ -298,7 +302,7 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     // REDIS :
     @Cacheable(value = "addressSortedByCache", key = "#sortedBy")
     @Override
-    public List<AddressDto> objectServiceListSortedBy(String sortedBy) {
+    public List<AddressDto> objectServiceListSortedByDefault(String sortedBy) {
         return iAddressRepository.findAll(Sort.by(Sort.Direction.ASC,sortedBy))
                 .stream().map(AddressMapper::AddressEntityToAddressDto)
                 .collect(Collectors.toList());

@@ -38,6 +38,7 @@ public class AddressMapper {
             addressDto.setDescription(addressDetailsDto.getDescription());
             addressDto.setCity(addressDetailsDto.getCity());
             addressDto.setState(addressDetailsDto.getState());
+            addressDto.setAvenue(addressDetailsDto.getAvenue());
             addressDto.setCountry(addressDetailsDto.getCountry());
         }
         return addressDto;
@@ -75,6 +76,7 @@ public class AddressMapper {
         addressDetailsEntity.setCity(addressDto.getCity());
         addressDetailsEntity.setState(addressDto.getState());
         addressDetailsEntity.setCountry(addressDto.getCountry());
+        addressDetailsEntity.setAvenue(addressDto.getAvenue());
 
         // Dikkat: AddressEntity içerisine Embedable Set Etmelisiniz.
         addressEntity.setDetailsEmbeddable(addressDetailsEntity);
