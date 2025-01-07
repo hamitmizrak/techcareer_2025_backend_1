@@ -203,7 +203,6 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     @Override
     @Transactional // Manipulation for process: Create, Delete, Update
     public AddressDto objectServiceUpdate(Long id, AddressDto addressDto) {
-
         // Öncelelikle ilgili Adresi ID ile bulalım
         AddressEntity addressEntityUpdate = dtoToEntity(objectServiceFindById(id));
 
@@ -233,9 +232,13 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     @Override
     // Manipulation for process: Create, Delete, Update
     @Transactional(
-            propagation = Propagation.MANDATORY, // Mutlaka mevcut bir işlem gerektirir
-            isolation = Isolation.READ_UNCOMMITTED, // Diğer işlemlerdeki geçici değişiklikler okunabilir
-            rollbackFor = {Exception.class} // Tüm istisnalar için rollback
+            propagation = Propagation.REQUIRED, // Varsayılan yayılım. İşlem varsa mevcut işlem kullanılır.
+            // propagation = Propagation.MANDATORY, // Mutlaka mevcut bir işlem gerektirir
+            isolation = Isolation.READ_COMMITTED, // İzolasyon seviyesi: READ_COMMITTED
+            readOnly = false, // Yazma işlemi olduğu için false
+            timeout = 30, // Maksimum 30 saniyede işlem tamamlanmalı
+            rollbackFor = {Exception.class}, // Tüm istisnalar için rollback yapılır
+            noRollbackFor = {IllegalArgumentException.class} // IllegalArgumentException rollback yapmaz
     )
     public AddressDto objectServiceDelete(Long id) {
         // Öncelelikle ilgili Adresi ID ile bulalım

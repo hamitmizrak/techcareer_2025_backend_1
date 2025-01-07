@@ -69,12 +69,14 @@ public class GHandleApiresult {
             int catchStatusCode,
             Supplier<T>  supplier // Lambda Expression'ı kullanmak için
     ){
+        // İşlem gerçekleştirecek lamba ifades
+        T data= supplier.get();
+
         try{
             // MESSAGE
             //message= messageSource.getMessage("generics.api.try.status.code",null, LocaleContextHolder.getLocale());
 
-            // İşlem gerçekleştirecek lamba ifades
-            T data= supplier.get();
+
 
             // Başarılıysa ApiResult Nesnesini oluştur
             ApiResult apiResult =  ApiResult.builder()
@@ -84,7 +86,6 @@ public class GHandleApiresult {
                     .validationErrors(Map.of("data",data))
                     .createdDate(new Date(System.currentTimeMillis()))
                     .build();
-
             // return new ResponseEntity<>(addressDtoApiCreate,HttpStatus.CREATED);
             // return ResponseEntity.status(201).body(addressDtoApiCreate);
             // return ResponseEntity.status(HttpStatus.CREATED).body(addressDtoApiCreate);
@@ -100,6 +101,7 @@ public class GHandleApiresult {
                     .status(catchStatusCode)
                     .message("message")
                     .path(path)
+                   .validationErrors(Map.of("data",data))
                     .createdDate(new Date(System.currentTimeMillis()))
                     .build();
             return ResponseEntity.status(catchStatusCode).body(apiResult);

@@ -1,0 +1,20 @@
+
+version: '3.1'
+
+# Services
+services:
+  backend:
+    container_name: container_blog
+    image: image_blog
+    restart: on-failure
+    build: .
+    ports:
+      - "4444:4444"
+    networks:
+      - blog_network
+
+# Network
+networks:
+  blog_network:
+    name: blog_network
+    driver: bridge
