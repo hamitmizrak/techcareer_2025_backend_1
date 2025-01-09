@@ -63,7 +63,6 @@ public class _1_DataLoadingSet implements CommandLineRunner {
         return addressDtoList;
     }
 
-
     // Address
     private AddressDto savedAddress(){
         AddressDto addressDto = AddressDto.builder()
