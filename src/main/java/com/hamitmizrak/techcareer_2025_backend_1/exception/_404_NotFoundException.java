@@ -3,8 +3,8 @@ package com.hamitmizrak.techcareer_2025_backend_1.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-// Status Code           : 500
-// INTERNAL_SERVER_ERROR : Server Hatası
+// Status Code           : 404
+// NOT_FOUND             : Bulunamadı
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class _404_NotFoundException extends RuntimeException {
 

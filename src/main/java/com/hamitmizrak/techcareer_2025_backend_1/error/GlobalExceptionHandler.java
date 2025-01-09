@@ -1,6 +1,5 @@
 package com.hamitmizrak.techcareer_2025_backend_1.error;
 
-
 import com.hamitmizrak.techcareer_2025_backend_1.exception._400_BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

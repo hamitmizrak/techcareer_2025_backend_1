@@ -1,9 +1,16 @@
 package com.hamitmizrak.techcareer_2025_backend_1.business.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+// LOMBOK
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 // Validation: jakarta.validation.constraints.NotEmpty;
 // @NotNull, @NotBlank, @NotEmpty(Genellikle bunu kullanırız çünkü en geniş özellikli)
@@ -15,7 +22,6 @@ Giriş verilerini doğrulamak için Validation(Doğrulama) kullanırız.
 UNUTMA: Boşluk bir karaktertir null ile karıştırmayınız.
 UNUTMA: Primitive türlerde null kullanılmaz. (e.g) byte,short,int,long, boolean, char, float,double
 UNUTMA: Wrapper türlerde null kullanabilirsiniz. (e.g) Byte,Short,Integer,Long, Boolean, Character, Float,Double
-
 
 1-) @NotNull  : Sadece Null olup olmaması
 Bir input'ta null olup olmadığını kontrol etmek için kullanılır.
@@ -38,18 +44,11 @@ private String name;
 name =null, name="", name ise çalışır.
 */
 
-// LOMBOK
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-
-
 // AddressDto(1) - CustomerDto(1)
 public class AddressDto extends BaseDto{
 
     @NotEmpty(message = "{address.description.validation.constraints.NotNull.message}")
+    //@NotBlank(message = "{address.description.validation.constraints.NotNull.message}")
     @Size(min = 5, message = "{address.description.least.validation.constraints.NotNull.message}")
     private String description;
 

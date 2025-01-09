@@ -56,7 +56,6 @@ public interface ICustomerRepository extends JpaRepository<CustomerEntity,Long> 
     // 3. Notlarda belirli bir ifadeyi içeren müşterileri getir
     List<CustomerEntity> findWithNotes(String notes);
 
-
     ///////////////////////////////////////////////////////////////
     // 3- JPQL
     /*
@@ -87,7 +86,6 @@ public interface ICustomerRepository extends JpaRepository<CustomerEntity,Long> 
     @Query("SELECT c FROM Customers c JOIN c.addressCustomerEntity a WHERE a.detailsEmbeddable.city = :city")
     List<CustomerEntity> findCustomersByCity(@Param("city") String city);
 
-
     ///////////////////////////////////////////////////////////////
     // 4- NATIVE QUERY
     // 4.
@@ -110,5 +108,4 @@ public interface ICustomerRepository extends JpaRepository<CustomerEntity,Long> 
     // 3. Notlara göre arama yap
     @Query(value = "SELECT * FROM customers WHERE notes LIKE %:keyword%", nativeQuery = true)
     List<CustomerEntity> searchCustomersByNotesNative(@Param("keyword") String keyword);
-
 }

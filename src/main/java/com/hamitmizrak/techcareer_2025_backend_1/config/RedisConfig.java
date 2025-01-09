@@ -90,8 +90,6 @@ public class RedisConfig {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }*/
 
-
-
     /**
      * RedisTemplate ile özel loglama ve transaction desteği.
      */

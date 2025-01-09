@@ -22,30 +22,23 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.webjars.NotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Yapılacaklar
-// Service
-// Api
-// Swagger
-// H2DB
-// Postman
-// Runner
-// CustomerDto-----
-// Relation (AddressDto -  CustomerDto )
 
 // LOMBOK
 @Getter
 @Setter
+@RequiredArgsConstructor //for injection
+@Log4j2
+//@Data
 //@ToString
 //@EqualsAndHashCode
 //@AllArgsConstructor
 //@NoArgsConstructor
 //@Builder
-@RequiredArgsConstructor //for injection
-@Log4j2
 
 //Service:  Asıl İş Yükünü yapan bean
 @Service
@@ -119,7 +112,7 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     // CREATE (Address)
     @Override
     // Manipulation for process: Create, Delete, Update
-    @Transactional(
+    @Transactional( // import org.springframework.transaction.annotation.Transactional;
             propagation = Propagation.REQUIRED, // Varsayılan yayılım. İşlem varsa mevcut işlem kullanılır.
             isolation = Isolation.READ_COMMITTED, // İzolasyon seviyesi: READ_COMMITTED
             readOnly = false, // Yazma işlemi olduğu için false
@@ -177,7 +170,14 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     @Override
     public AddressDto objectServiceFindById(Long id) {
         //REDIS
-        System.err.println("Redis başlamadan önce ilk burası çalışacak ancak redis çalışıyorsa bunu redis cache zamanı(1dakika) bitene kadar veya flush yapana kadar görmeyeceksiniz "+id);
+
+        StringBuilder stringBuilder= new StringBuilder();
+        stringBuilder
+                .append("Redis başlamadan önce ilk burası çalışacak")
+                        .append("\n")
+                                .append("ancak redis çalışıyorsa bunu redis cache zamanı(1dakika) bitene kadar")
+                                        .append("\nveya flush yapana kadar görmeyeceksiniz "+id);
+        System.err.println(stringBuilder.toString());
 
         // AddressEntity (1.YOL Optional)
         /*
@@ -255,7 +255,6 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
 
         // Silmek
         iAddressRepository.deleteById(id);
-
         return entityToDto(addressEntityDelete);
     }
 
@@ -271,9 +270,9 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
 
     ////////////////////////////////////////////////////////////////
     // PAGE & SORT
-    // PAGE
     // import org.springframework.cache.annotation.Cacheable;
     // REDIS : key için eğer parametreler varsa ekleyelim.
+    // PAGE
     @Cacheable(value = "addressPaginationCache", key = "#currentPage + '-' + #pageSize")
     @Override
     public Page<AddressDto> objectServicePagination(int currentPage, int pageSize) {
@@ -296,6 +295,7 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
         // PageImpl, toplam öğe sayısını ve sayfalama bilgilerini koruyarak hem performanslı hem de düzenli bir dönüşüm sağlar.
         return new PageImpl<>(addressDtoPage, pageable, addressEntityPage.getTotalElements());
     }
+
     /*
     PageImpl Kullanımı
     PageImpl, bir List türündeki veriyi Page nesnesine dönüştürmek için Spring Data JPA tarafından sağlanan bir sınıftır. PageImpl aşağıdaki durumlarda kullanılır:

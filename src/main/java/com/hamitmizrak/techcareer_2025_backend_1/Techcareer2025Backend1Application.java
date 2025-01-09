@@ -44,7 +44,7 @@ public class Techcareer2025Backend1Application {
 
 	// Normal Constructor
 	public Techcareer2025Backend1Application() {
-		System.out.println("@SpringBootApplication => Constrcutor");
+		System.out.println("@SpringBootApplication => Constructor");
 	}
 
 	// PostConstruct

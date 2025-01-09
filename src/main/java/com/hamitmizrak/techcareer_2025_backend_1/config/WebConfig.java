@@ -50,15 +50,14 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addFormatter(new DateFormatter("yyyy-MM-dd"));  // Tarih biçimlendirici ekler
     }
 
-
     // 1.YOL Varsayılan dil olarak Türkçe  ayarlanır
     // Varsayılan dil olarak Türkçe ayarlanır
-    /*@Bean
+    @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
         localeResolver.setDefaultLocale(new Locale("tr", "TR"));  // Varsayılan dil Türkçe
         return localeResolver;
-    }*/
+    }
 
     // 2.YOL Varsayılan dil olarak İngilizce ayarlanır
     /*
@@ -78,8 +77,10 @@ public class WebConfig implements WebMvcConfigurer {
      /*
     Açıklamalar:
     CookieLocaleResolver: Kullanıcının seçtiği dili bir cookie'de saklar. Bu sayede kullanıcı uygulamaya tekrar girdiğinde aynı dili kullanabilir.
-    localeResolver.setDefaultLocale(new Locale("tr", "TR")): Bu satır, varsayılan dil olarak Türkçe'yi (Türkiye) ayarlar. Bu, uygulama ilk açıldığında Türkçe'nin kullanılacağı anlamına gelir.
-    LocaleChangeInterceptor: Bu interceptor, URL parametresine göre dili değiştirmeye olanak tanır. Örneğin, ?lang=en parametresi ile dili İngilizce yapabilirsiniz.
+    localeResolver.setDefaultLocale(new Locale("tr", "TR")): Bu satır, varsayılan dil olarak Türkçe'yi (Türkiye) ayarlar.
+    Bu, uygulama ilk açıldığında Türkçe'nin kullanılacağı anlamına gelir.
+    LocaleChangeInterceptor: Bu interceptor, URL parametresine göre dili değiştirmeye olanak tanır.
+    Örneğin, ?lang=en parametresi ile dili İngilizce yapabilirsiniz.
     Örnek Kullanım:
     Uygulama varsayılan olarak Türkçe başlayacaktır.
     URL'de ?lang=en gibi bir parametre ile dili İngilizce veya başka dillerle değiştirebilirsiniz.

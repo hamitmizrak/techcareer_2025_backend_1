@@ -72,7 +72,6 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
         return ResponseEntity.ok(iAddressService.objectServiceList());
     }
 
-
     // FIND BY ID (Address)
     // http://localhost:4444/api/address/v1.0.0/find
     // http://localhost:4444/api/address/v1.0.0/find/0
@@ -95,7 +94,6 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
                 500,
                 ()->iAddressService.objectServiceFindById(id));
     }
-
 
     // UPDATE (Address)
     // http://localhost:4444/api/address/v1.0.0/update/1

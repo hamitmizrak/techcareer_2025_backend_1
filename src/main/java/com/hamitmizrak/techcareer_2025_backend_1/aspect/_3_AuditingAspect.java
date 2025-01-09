@@ -1,12 +1,11 @@
 package com.hamitmizrak.techcareer_2025_backend_1.aspect;
 
-import com.hamitmizrak.techcareer_2025_backend_1.users.AuthenticationName;
+import com.hamitmizrak.techcareer_2025_backend_1.login.AuthenticationName;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.List;
 

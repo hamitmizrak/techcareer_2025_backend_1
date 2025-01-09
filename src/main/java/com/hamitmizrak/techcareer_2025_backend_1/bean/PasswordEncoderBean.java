@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class PasswordEncoderBean {
 
+    // Dikkat: Öncelikle Constructor sonrasında PostConstructor gelmektedir
     // Constructor
     public PasswordEncoderBean() {
         System.out.println("PasswordEncoderBean: Constructor Bean Başlatıldı");
@@ -38,6 +39,7 @@ public class PasswordEncoderBean {
         //log.info("PasswordEncoderBean: @PreDestroy Bean Öldü");
     }
 
+    // NOT: Default olarak kullanılan Scope
     // Bean Oluşturma (Singleton Scope)
     @Bean
     @Scope("singleton")

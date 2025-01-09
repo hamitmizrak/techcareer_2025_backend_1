@@ -1,10 +1,9 @@
 package com.hamitmizrak.techcareer_2025_backend_1.error;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
 import java.util.Date;
 import java.util.Map;
-
 
 // LOMBOK
 @Getter
@@ -13,6 +12,10 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 
+// Spring Framuworkun Error mekanizması yerine bizim yazdığımız hata yakalama mekanizmasıdır
+// Jackson: Objeyi , Json'a çevirmek
+// @JsonInclude(JsonInclude.Include.NON_NULL): Eğer ApiResultta null değer varsa backent'te gönder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResult {
 
     // sem pvc
@@ -34,7 +37,6 @@ public class ApiResult {
         this.error = error;
         this.status = status;
     }
-
 
     // Constructor (Parametreli)  pms
     public ApiResult(String path, String message, int status) {

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 // Status Code: 201
 // CREATED    : Oluşturuldu
-
 @ResponseStatus(value = HttpStatus.CREATED)
 public class _201_CreatedException extends RuntimeException {
 

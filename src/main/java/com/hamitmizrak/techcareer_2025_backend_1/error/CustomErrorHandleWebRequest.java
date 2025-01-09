@@ -60,7 +60,6 @@ public class CustomErrorHandleWebRequest implements ErrorController {
     // ApiResult
     private ApiResult apiResult;
 
-
     // http://localhost:4444/error
     @RequestMapping("/error")
     public ApiResult handleErrorMethod(WebRequest webRequest) {

@@ -12,6 +12,9 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.Locale;
 
+// src/resource/ValidationMessages.properties
+// ApiResultValidMessages : ValidationMessage'tan gelen verileri almak ve I18N için kullacağımız yapıdır.
+
 @Configuration
 public class ApiResultValidMessages implements WebMvcConfigurer {
 

@@ -1,7 +1,7 @@
 package com.hamitmizrak.techcareer_2025_backend_1.audit;
 
 
-import com.hamitmizrak.techcareer_2025_backend_1.users.AuthenticationName;
+import com.hamitmizrak.techcareer_2025_backend_1.login.AuthenticationName;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;

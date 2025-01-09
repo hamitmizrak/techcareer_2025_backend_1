@@ -1,6 +1,5 @@
 package com.hamitmizrak.techcareer_2025_backend_1.data.entity;
 
-
 import com.hamitmizrak.techcareer_2025_backend_1.data.embedded.AddressEntityDetailsEmbeddable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@Data
+//@ToString
+//@EqualsAndHashCode
+
 
 // ENTITY
 @Entity(name = "Addresses") // name="Addresses" => Relation için name yazdım
@@ -44,7 +47,6 @@ public class AddressEntity extends BaseEntity {
     // Bunun yerine kullanıcıya silindiği gösterip database
     @Builder.Default
     private Boolean isDeleted = false;
-
 
     // Database tablosundaki sutunlarda olmasın ancak Java Class'larında olsun
     @Transient

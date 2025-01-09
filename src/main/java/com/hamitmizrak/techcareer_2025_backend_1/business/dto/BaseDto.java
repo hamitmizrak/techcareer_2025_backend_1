@@ -2,7 +2,6 @@ package com.hamitmizrak.techcareer_2025_backend_1.business.dto;
 
 import com.hamitmizrak.techcareer_2025_backend_1.audit.AuditingAwareBaseDto;
 import lombok.*;
-
 import java.io.Serializable;
 import java.util.Date;
 

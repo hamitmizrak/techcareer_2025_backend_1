@@ -8,8 +8,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 /*
-public interface IAuditLogRepository extends JpaRepository<AuditLogEntity, Long> {
-}
+public interface IAuditLogRepository extends JpaRepository<AuditLogEntity, Long> {}
+public interface IAuditLogRepository extends CrudRepository<AuditLogEntity, Long> {}
+public interface IAuditLogRepository extends SortingAndPagingRepository<AuditLogEntity, Long> {}
 */
 
 // JDBC Template
@@ -26,7 +27,6 @@ public class _2_IAuditLogRepository {
         String sql = "INSERT INTO audit_logs (message, timestamp) VALUES (?, ?)";
         return jdbcTemplate.update(sql, auditLogEntity.getMessage(), auditLogEntity.getTimestamp());
     }
-
 
     // CREATE ALL
     // Birden fazla AuditLogEntity kaydetme metodu
@@ -45,7 +45,6 @@ public class _2_IAuditLogRepository {
                         ps.setString(5, auditLogEntity.getMessage());
                         //ps.setObject(6, auditLogEntity.getTimestamp());
                     }
-
                     @Override
                     public int getBatchSize() {
                         return auditLogEntities.size();
@@ -53,7 +52,6 @@ public class _2_IAuditLogRepository {
                 }
         );
     }
-
 
     // LIST
     // AuditLogEntity listeleme metodu
@@ -68,7 +66,6 @@ public class _2_IAuditLogRepository {
         });
     }
 
-
     // FIND BY ID
     // ID'ye göre AuditLogEntity getirme
     public _1_AuditLogEntity getAuditLogById(Long id) {
@@ -81,7 +78,6 @@ public class _2_IAuditLogRepository {
             return auditLogEntity;
         });
     }
-
 
     // UPDATE
     // AuditLogEntity güncelleme metodu
@@ -96,5 +92,4 @@ public class _2_IAuditLogRepository {
         String sql = "DELETE FROM audit_logs WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
-
 }
