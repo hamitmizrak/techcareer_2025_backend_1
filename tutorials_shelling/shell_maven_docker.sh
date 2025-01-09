@@ -22,6 +22,7 @@ version_info
 maven_deployment(){
   ./shell_countdown.sh
   #mvn clean package
+  cd ..
   mvn clean package -DskipTests
 }
 maven_deployment

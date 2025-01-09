@@ -90,9 +90,6 @@ wsl --unregister docker-desktop-data
 netsh winsock reset
 netsh int ip  reset
 
-
-
-
 #
 Bu hata, sisteminizde WSL üzerinde kurulu bir dağıtım olmadığını ve varsayılan bir dağıtım yapılandırılamadığını gösteriyor. Bu durumu çözmek için aşağıdaki adımları takip edebilirsiniz:
 
