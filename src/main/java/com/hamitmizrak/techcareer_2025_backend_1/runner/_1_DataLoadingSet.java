@@ -1,18 +1,22 @@
 package com.hamitmizrak.techcareer_2025_backend_1.runner;
 
+import com.hamitmizrak.techcareer_2025_backend_1.aspect._1_AuditLogEntity;
+import com.hamitmizrak.techcareer_2025_backend_1.aspect._3_AuditingAspect;
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.AddressDto;
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.CustomerDto;
+import com.hamitmizrak.techcareer_2025_backend_1.business.dto.OrderDto;
+import com.hamitmizrak.techcareer_2025_backend_1.business.dto.ProductDto;
 import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IAddressService;
 import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.ICustomerService;
+import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IOrderService;
+import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 // Runner: Proje ayağa kalkarken eklememiz gereken proje kodlarını database vs eklememize yardımcı oluyor.
 // Bazı veriler başlamadan öncesinde hazır verilerle çalışmak isteyebilir.
@@ -39,6 +43,13 @@ public class _1_DataLoadingSet implements CommandLineRunner {
     // Injection
     private final IAddressService iAddressService;
     private final ICustomerService iCustomerService;
+    private final IProductService iProductService;
+    private final IOrderService iOrderService;
+
+    // AOP Injection
+    private final _3_AuditingAspect  auditingAspect;
+    // AOP
+    List<_1_AuditLogEntity> auditLogs = new ArrayList<>();
 
     // Çoklu Address Ekle
     private List<AddressDto> savedListAddress(){
@@ -65,6 +76,7 @@ public class _1_DataLoadingSet implements CommandLineRunner {
 
     // Address
     private AddressDto savedAddress(){
+        System.out.println(" Address Veriliyor ");
         AddressDto addressDto = AddressDto.builder()
                 .addressQrCode("qr code")
                 .city("city")
@@ -77,12 +89,17 @@ public class _1_DataLoadingSet implements CommandLineRunner {
                 .doorNumber("door number")
                 .isDeleted(false)
                 .build();
-        //iAddressService.objectServiceCreate(addressDto);
+        //iAddressService.objectServiceCreate(addressDto);  //composition kullandığımnda dolayı kapattım
+
+        // AOP Save
+        auditLogs.add(new _1_AuditLogEntity("AddressEntity", "CREATE", "HamitM", new Date()));
+
         return addressDto;
     }
 
-    // Address
+    // Customer
     private CustomerDto relationCustomerSave(){
+        System.out.println(" Customer Veriliyor ");
         // AddressDto
         AddressDto addressDto= savedAddress();
 
@@ -96,8 +113,67 @@ public class _1_DataLoadingSet implements CommandLineRunner {
         customerDto.setCompositionAddressDto(addressDto);
 
         // Customer Save
-        iCustomerService.objectServiceCreate(customerDto);
+        //iCustomerService.objectServiceCreate(customerDto); //composition kullandığımnda dolayı kapattım
+
+        // AOP Save
+        auditLogs.add(new _1_AuditLogEntity("CustomerEntity", "CREATE", "HamitM", new Date()));
+
         return customerDto;
+    }
+
+    // Product
+    private ProductDto[] relationProductSave(){
+        System.out.println(" Ürün Veriliyor ");
+        ProductDto[] productDtoList= new ProductDto[2];
+
+        // Ürün-1
+        ProductDto productDto1= ProductDto.builder()
+                .name("Laptop-1")
+                .trade("marka-1")
+                .notes("Laptop Notes Data")
+                .build();
+
+        // Ürün-1
+        ProductDto productDto2= ProductDto.builder()
+                .name("Masaüstü-2")
+                .trade("marka-2")
+                .notes("Masaüstü Notes Data")
+                .build();
+        return new ProductDto[]{productDto1,productDto2};
+    }
+
+    // Order
+    private void relationOrderSave(){
+        System.out.println(" Sipariş Veriliyor ");
+
+        // Sipariş
+        OrderDto orderDto1= OrderDto.builder()
+                .name("sipariş name -1")
+                .price("sipariş price-1")
+                .notes("sipari note")
+                .build();
+
+        // Composition
+        // Dikkat: Customer içinde Address vardı
+        orderDto1.setCompositionCustomerDto(relationCustomerSave());
+
+        // Dikkat: Order içine Sipariş Ekle
+        orderDto1.setCompositionProductDtoList(Arrays.asList(relationProductSave()[0],relationProductSave()[1]));
+
+        // Order Database Kaydet
+        OrderDto orderDtoDatabaseSave= (OrderDto) iOrderService.objectServiceCreate(orderDto1);
+        System.out.println(orderDtoDatabaseSave);
+
+        // AOP Save
+        auditLogs.add(new _1_AuditLogEntity("ProductEntity", "CREATE", "HamitM", new Date()));
+        auditLogs.add(new _1_AuditLogEntity("OrderEntity", "CREATE", "HamitM", new Date()));
+    }
+
+    // AOP Save
+    private void aopSave(){
+        // Toplu olarak Audit Logs kaydet
+        auditingAspect.logBatchAudit(auditLogs);
+        System.out.println("Tüm kayıtlar ve audit log'lar tamamlandı.");
     }
 
     // run
@@ -105,6 +181,10 @@ public class _1_DataLoadingSet implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // savedListAddress();
         // savedAddress();
-        relationCustomerSave();
+        // relationCustomerSave();
+        relationOrderSave();
+
+        // Aop Save
+        aopSave();
     } //end PSVM
 } //end _1_DataLoadingSet
