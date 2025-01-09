@@ -53,12 +53,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     // 1.YOL Varsayılan dil olarak Türkçe  ayarlanır
     // Varsayılan dil olarak Türkçe ayarlanır
-    @Bean
+    /*@Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
         localeResolver.setDefaultLocale(new Locale("tr", "TR"));  // Varsayılan dil Türkçe
         return localeResolver;
-    }
+    }*/
 
     // 2.YOL Varsayılan dil olarak İngilizce ayarlanır
     /*

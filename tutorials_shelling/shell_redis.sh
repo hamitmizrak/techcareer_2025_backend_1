@@ -20,6 +20,8 @@ redis_run(){
         docker info
         docker --version
 
+        ls -al
+
         # Geri Sayım
         ./shell_countdown.sh
 
