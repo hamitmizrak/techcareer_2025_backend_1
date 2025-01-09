@@ -41,7 +41,8 @@ public class OrderEntity extends BaseEntity {
     // Order(1) - Customer(1) NOT: Customer bilgilerine Order üzerinden erişimden sağlayacağım.
     // Bundan dolayı @JoinColumn Order içinde yazıyoruz
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id",unique = true) //FK için
+    //@JoinColumn(name = "customer_id", referencedColumnName = "id",unique = true) //FK için
+    @JoinColumn(name = "customer_id", referencedColumnName = "id",unique = false) //FK için
     private CustomerEntity customerOrderEntity;
 
     // Order(N) - Product(M)

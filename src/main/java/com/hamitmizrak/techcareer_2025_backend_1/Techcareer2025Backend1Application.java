@@ -3,6 +3,7 @@ package com.hamitmizrak.techcareer_2025_backend_1;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.TimeZone;
@@ -32,8 +33,9 @@ import java.util.TimeZone;
 // Buradaki exclude ne zaman kapatmam gerekiyor ? cevap: Spring Security ile çalıştığımız zaman kapat
 @SpringBootApplication(exclude = {
 		//SecurityAutoConfiguration.class,
-		org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
-		org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class,
+		// Spring Security JWT kullanmak için exclude yapmamalıyız.......
+		//org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
+		//org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class,
 
 		// Eğer Redis bağımlılığını kaldırmak istemiyorsanız ancak Redis yapılandırmasını devre dışı bırakmak istiyorsanız
 		//RedisAutoConfiguration.class,
