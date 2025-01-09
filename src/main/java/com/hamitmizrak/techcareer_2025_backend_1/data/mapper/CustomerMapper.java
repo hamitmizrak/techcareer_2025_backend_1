@@ -43,7 +43,7 @@ public class CustomerMapper {
         customerEntity.setFistname(customerDto.getFistname());
         customerEntity.setLastname(customerDto.getLastname());
         customerEntity.setNotes(customerDto.getNotes());
-        customerEntity.setSystemCreatedDate(customerDto.getSystemCreatedDate());
+        //customerEntity.setSystemCreatedDate(customerDto.getSystemCreatedDate());
 
         // DİKKAT: Composition (Customer(1) -Address(1))
         // DİKKAT: Composition (Customer(1) -Address(1))

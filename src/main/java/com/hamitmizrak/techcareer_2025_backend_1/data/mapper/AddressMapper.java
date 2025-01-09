@@ -17,7 +17,7 @@ public class AddressMapper {
 
         // Common BaseDto için
         addressDto.setId(addressEntity.getId());
-        addressDto.setSystemCreatedDate(addressEntity.getSystemCreatedDate());
+       // addressDto.setSystemCreatedDate(addressEntity.getSystemCreatedDate());
         addressDto.setIsDeleted(addressEntity.getIsDeleted());
         addressDto.setVersion(addressEntity.getVersion());
 

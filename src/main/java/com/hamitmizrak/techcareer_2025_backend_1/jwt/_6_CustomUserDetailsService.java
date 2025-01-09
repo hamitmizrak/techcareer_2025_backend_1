@@ -30,9 +30,9 @@ public class _6_CustomUserDetailsService implements UserDetailsService {
         // import org.springframework.security.core.userdetails.User;
         UserDetails userDetails= User.builder()
                 .username(userEntity.getUsername())
-                .password(userEntity.getPassword())
+                //.password(userEntity.getPassword())
                 //.password("{noop}"+userEntity.getPassword())
-                //.password("{noop}root")
+                .password("{noop}root")
                 .roles(userEntity.getRole().toString())
                 .build();
 

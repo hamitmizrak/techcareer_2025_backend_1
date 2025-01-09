@@ -56,6 +56,7 @@ abstract public class BaseEntity extends AuditingAwareBaseDto implements Seriali
     @Column(name = "id", insertable = true, updatable = false, unique = true)
     protected Long id;
 
+
     // SYSTEM DATE
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -64,8 +65,8 @@ abstract public class BaseEntity extends AuditingAwareBaseDto implements Seriali
             insertable = true,
             updatable = false,
             nullable = false,
-            unique = true,
-            length = 20,
+            //unique = true,
+            length = 255,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     protected Date systemCreatedDate;
 
