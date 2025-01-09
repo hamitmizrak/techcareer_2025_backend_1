@@ -1,12 +1,18 @@
 package com.hamitmizrak.techcareer_2025_backend_1.runner;
 
 import com.hamitmizrak.techcareer_2025_backend_1.business.dto.AddressDto;
+import com.hamitmizrak.techcareer_2025_backend_1.business.dto.CustomerDto;
 import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.IAddressService;
+import com.hamitmizrak.techcareer_2025_backend_1.business.services.interfaces.ICustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 // Runner: Proje ayağa kalkarken eklememiz gereken proje kodlarını database vs eklememize yardımcı oluyor.
 // Bazı veriler başlamadan öncesinde hazır verilerle çalışmak isteyebilir.
@@ -32,10 +38,34 @@ public class _1_DataLoadingSet implements CommandLineRunner {
 
     // Injection
     private final IAddressService iAddressService;
+    private final ICustomerService iCustomerService;
+
+    // Çoklu Address Ekle
+    private List<AddressDto> savedListAddress(){
+        //System.out.println("1- Address hazırlanıyor...");
+        List<AddressDto> addressDtoList= new ArrayList<>();
+        for (int i = 1; i <=10 ; i++) {
+            AddressDto addressDto = AddressDto.builder()
+                    .addressQrCode(UUID.randomUUID().toString())
+                    .city("city"+i)
+                    .state("state"+i)
+                    .country("country"+i)
+                    .description("description"+i)
+                    .avenue("avenue"+i)
+                    .street("street"+i)
+                    .zipCode("zip code"+i)
+                    .doorNumber("door number"+i)
+                    .isDeleted(false)
+                    .build();
+            iAddressService.objectServiceCreate(addressDto);
+            addressDtoList.add(addressDto);
+        }
+        return addressDtoList;
+    }
+
 
     // Address
     private AddressDto savedAddress(){
-        System.out.println("1- Address hazırlanıyor...");
         AddressDto addressDto = AddressDto.builder()
                 .addressQrCode("qr code")
                 .city("city")
@@ -48,13 +78,34 @@ public class _1_DataLoadingSet implements CommandLineRunner {
                 .doorNumber("door number")
                 .isDeleted(false)
                 .build();
-        iAddressService.objectServiceCreate(addressDto);
+        //iAddressService.objectServiceCreate(addressDto);
         return addressDto;
+    }
+
+    // Address
+    private CustomerDto relationCustomerSave(){
+        // AddressDto
+        AddressDto addressDto= savedAddress();
+
+        // CustomerDto
+        CustomerDto customerDto= new CustomerDto();
+        customerDto.setFistname("Hamit");
+        customerDto.setLastname("Mızrak");
+        customerDto.setNotes("Notes Data");
+
+        // Composition
+        customerDto.setCompositionAddressDto(addressDto);
+
+        // Customer Save
+        iCustomerService.objectServiceCreate(customerDto);
+        return customerDto;
     }
 
     // run
     @Override
     public void run(String... args) throws Exception {
-        savedAddress();
-    }
-}
+        // savedListAddress();
+        // savedAddress();
+        relationCustomerSave();
+    } //end PSVM
+} //end _1_DataLoadingSet

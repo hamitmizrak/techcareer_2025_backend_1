@@ -176,6 +176,9 @@ public class AddresServiceImpl implements IAddressService<AddressDto, AddressEnt
     @Cacheable(value = "addressFindByIdCache", key = "#id")
     @Override
     public AddressDto objectServiceFindById(Long id) {
+        //REDIS
+        System.err.println("Redis başlamadan önce ilk burası çalışacak ancak redis çalışıyorsa bunu redis cache zamanı(1dakika) bitene kadar veya flush yapana kadar görmeyeceksiniz "+id);
+
         // AddressEntity (1.YOL Optional)
         /*
         Boolean addressEntityBoolean = iAddressRepository.findById(id).isEmpty();
