@@ -18,14 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 // API
 @RestController
 @RequestMapping("/api/auth")
-
 public class _8_AuthApi {
 
     // Injection
     private final _5_IUserRepository iUserRepository;
     private final _7_JwtUtils jwtUtils;
-
-    // Bean
+    private final GHandleApiresult gHandleApiresult;
     private final PasswordEncoderBean passwordEncoderBean;
 
     // AuthenticationManager
@@ -53,19 +51,17 @@ public class _8_AuthApi {
     // REGISTER
     @PostMapping("/register")
     public ResponseEntity<?>  userRegister(@RequestBody _2_RegisterRequest registerRequest) {
+
+        // username and password Set
         _4_UserEntity userEntity = new _4_UserEntity();
-
-        // username Set
         userEntity.setUsername(registerRequest.getUsername());
-
-        // password Set
-        userEntity.setPassword(passwordEncoderBean.getPasswordEncoderSingleton().encode(registerRequest.getPassword()));
-
+        //userEntity.setPassword(passwordEncoderBean.getPasswordEncoderSingleton().encode(registerRequest.getPassword()));
+        userEntity.setPassword(registerRequest.getPassword());
         // Role Set
         userEntity.setRole(_3_Role.USER);
 
         //return ResponseEntity.ok("Kayıt Başarılı\n"+userEntity+"\n");
-        return GHandleApiresult.genericsHandleApiResult(
+        return gHandleApiresult.genericsMethod(
                 "/api/auth/register",
                 200,
                 500,
@@ -109,7 +105,7 @@ public class _8_AuthApi {
         System.out.println(token);
         /*return ResponseEntity.ok(token);*/
         //return ResponseEntity.ok("Kayıt Başarılı\n"+userEntity+"\n");
-        return GHandleApiresult.genericsHandleApiResult(
+        return gHandleApiresult.genericsMethod(
                 "/api/auth/login",
                 200,
                 500,
