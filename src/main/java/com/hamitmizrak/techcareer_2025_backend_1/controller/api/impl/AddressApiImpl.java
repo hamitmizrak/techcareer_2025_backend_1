@@ -45,19 +45,19 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     // Injection
     private final IAddressService iAddressService;
     private final MessageSource messageSource;
+    private final GHandleApiresult gHandleApiresult;
 
     // Api Result
     private ApiResult apiResult=new ApiResult();
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // CRUD
-
     // CREATE (Address)
     // http://localhost:4444/api/address/v1.0.0/create
     @Override
     @PostMapping("/create")
     public ResponseEntity<?> objectApiCreate(@Valid @RequestBody AddressDto addressDto) {
-      return GHandleApiresult.genericsHandleApiResult(
+      return gHandleApiresult.genericsMethod(
               "api/address/v1.0.0/create",
               201,
               500,
@@ -88,7 +88,7 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
         }else if(id<0){
             throw new HamitMizrakException("unauthorized: Yetkisiz Giriş");
         }
-        return GHandleApiresult.genericsHandleApiResult(
+        return gHandleApiresult.genericsMethod(
                 "api/address/v1.0.0/find",
                 200,
                 500,
@@ -102,7 +102,7 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     public ResponseEntity<?> objectApiUpdate(
             @PathVariable(name = "id", required = false) Long id,
             @Valid @RequestBody AddressDto addressDto) {
-        return GHandleApiresult.genericsHandleApiResult(
+        return gHandleApiresult.genericsMethod(
                 "api/address/v1.0.0/update",
                 201,
                 500,
@@ -114,7 +114,7 @@ public class AddressApiImpl implements IAddressApi<AddressDto> {
     @Override
     @DeleteMapping({"/delete/","/delete/{id}"})
     public ResponseEntity<?> objectApiDelete(@PathVariable(name = "id", required = false) Long id) {
-        return GHandleApiresult.genericsHandleApiResult(
+        return gHandleApiresult.genericsMethod(
                 "api/address/v1.0.0/delete",
                 200,
                 500,

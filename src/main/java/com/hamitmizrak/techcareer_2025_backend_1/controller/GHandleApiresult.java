@@ -4,7 +4,9 @@ import com.hamitmizrak.techcareer_2025_backend_1.error.ApiResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
@@ -54,21 +56,21 @@ HTTP Status Code'lar, RESTful API'lerde her bir işlem için standart geri dön�
 ResponseEntity kullanırken bu kodları döndürmek, API'nin kullanıcılar ve istemciler için anlaşılır ve standart bir yapıda olmasını sağlar.
 */
 
-
 // LOMBOK
 @RequiredArgsConstructor
 @Log4j2
 // ApiResult için Generics yapımız için kullanıyoruz.
+// GHandleApiresult sınıfınızın Spring tarafından bir Bean olarak yönetilmesi gerekir.
+@Component
 public class GHandleApiresult {
 
     // Injection
-    private static final MessageSource messageSource = null;
+    private final MessageSource messageSource;
     private ApiResult apiResult;
     private static String message; // Message
 
-    // Generic ResponseEntity ApiResult
-    //public static final  <T> ResponseEntity<?> genericsHandleApiResult(){
-    public static final <T> ResponseEntity<ApiResult> genericsHandleApiResult(
+    // genericsMethod
+    public <T> ResponseEntity<ApiResult> genericsMethod(
             String path,
             int tryStatusCode,
             int catchStatusCode,
@@ -80,12 +82,12 @@ public class GHandleApiresult {
 
         try {
             // MESSAGE
-            //message= messageSource.getMessage("generics.api.try.status.code",null, LocaleContextHolder.getLocale());
+            message = messageSource.getMessage("generics.api.try.status.code", null, LocaleContextHolder.getLocale());
 
             // Başarılıysa ApiResult Nesnesini oluştur
             ApiResult apiResult = ApiResult.builder()
                     .status(tryStatusCode)
-                    .message("message")
+                    .message(message)
                     .path(path)
                     .validationErrors(Map.of("data", data))
                     .createdDate(new Date(System.currentTimeMillis()))
@@ -98,12 +100,11 @@ public class GHandleApiresult {
             return ResponseEntity.status(tryStatusCode).body(apiResult);
         } catch (Exception e) {
             // MESSAGE
-            //message= messageSource.getMessage("generics.api.catch.status.code",null, LocaleContextHolder.getLocale());
-
+            message = messageSource.getMessage("generics.api.catch.status.code", null, LocaleContextHolder.getLocale());
             // Başarısızsa ApiResult Nesnesini oluştur
             ApiResult apiResult = ApiResult.builder()
                     .status(catchStatusCode)
-                    .message("message")
+                    .message(message)
                     .path(path)
                     .validationErrors(Map.of("data", data))
                     .createdDate(new Date(System.currentTimeMillis()))
@@ -112,39 +113,3 @@ public class GHandleApiresult {
         } //end catch
     } // end method(genericsHandleApiResult)
 } //end class
-
-/*
-Status Code
-CREATE	201 Created	Yeni kaynak başarıyla oluşturuldu.
-
-LIST	200 OK	Kaynaklar başarıyla listelendi.
-
-UPDATE	200 OK	Güncellenen kaynak döndürüldü.
-        204 No Content	Güncelleme başarılı, ancak yanıt yok.
-
-DELETE	204 No Content	Başarıyla silindi, ancak yanıt yok.
-        200 OK	Silme işlemi başarılı, bilgi döndürüldü.
- */
-// Status coded
-enum EMyspecialStatusCode {
-    OK(200, "Ok"), CREATED(201, "Created"), NOCONTENT(204, "No Content");
-
-    // Field
-    private final int key;
-    private final String value;
-
-    // Constuctor
-    private EMyspecialStatusCode(int key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    // Getter And Setter
-    public int getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-}
