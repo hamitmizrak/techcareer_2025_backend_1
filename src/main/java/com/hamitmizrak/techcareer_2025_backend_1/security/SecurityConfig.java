@@ -1,5 +1,6 @@
 package com.hamitmizrak.techcareer_2025_backend_1.security;
 
+import com.hamitmizrak.techcareer_2025_backend_1.bean.PasswordEncoderBean;
 import com.hamitmizrak.techcareer_2025_backend_1.jwt._7_JwtUtils;
 import com.hamitmizrak.techcareer_2025_backend_1.jwt._9_JwtFilter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SecurityConfig {
 
     // Injection
+    private final PasswordEncoderBean passwordEncoderBean;
 
     //// JWT INJECTION ///////////////////////////////////////////////////////////////////////////
     // For JWT
@@ -200,6 +202,5 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
-
 
 }
